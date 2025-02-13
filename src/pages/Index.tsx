@@ -1,13 +1,36 @@
-// Update this page (the content is just a fallback if you fail to update the page)
+
+import { MainLayout } from "@/components/MainLayout";
+import { WeekCalendar } from "@/components/Calendar/WeekCalendar";
+import { Button } from "@/components/ui/button";
 
 const Index = () => {
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-100">
-      <div className="text-center">
-        <h1 className="text-4xl font-bold mb-4">Welcome to Your Blank App</h1>
-        <p className="text-xl text-gray-600">Start building your amazing project here!</p>
+    <MainLayout>
+      <div className="space-y-8">
+        <div className="flex items-center justify-between">
+          <h1 className="text-3xl font-semibold fade-in">Calendrier Familial</h1>
+          <div className="flex items-center gap-3">
+            <Button variant="outline">Aujourd'hui</Button>
+            <div className="flex items-center rounded-lg border">
+              {["Tout", "Actif", "Terminé"].map((filter) => (
+                <Button
+                  key={filter}
+                  variant="ghost"
+                  className="rounded-none first:rounded-l-lg last:rounded-r-lg"
+                >
+                  {filter}
+                </Button>
+              ))}
+            </div>
+          </div>
+        </div>
+
+        {/* Calendrier hebdomadaire */}
+        <div className="fade-in">
+          <WeekCalendar />
+        </div>
       </div>
-    </div>
+    </MainLayout>
   );
 };
 
