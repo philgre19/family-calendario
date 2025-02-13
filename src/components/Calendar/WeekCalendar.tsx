@@ -1,91 +1,30 @@
 
 import { useState } from "react";
-import { format, addDays, startOfWeek } from "date-fns";
+import { format, addDays, startOfWeek, parseISO } from "date-fns";
 import { fr } from "date-fns/locale";
 import { EventDetails } from "./EventDetails";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { ArrowLeft, ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
-
-interface Event {
-  id: string;
-  title: string;
-  start: Date;
-  end: Date;
-  color: string;
-  participants: Participant[];
-  description: string;
-  platform?: string;
-}
-
-interface Participant {
-  id: string;
-  name: string;
-  avatar: string;
-  confirmed?: boolean;
-}
-
-// Données de test
-const events: Event[] = [
-  {
-    id: "1",
-    title: "Réunion de famille",
-    start: new Date(2024, 2, 20, 14, 0),
-    end: new Date(2024, 2, 20, 16, 0),
-    color: "event-emma",
-    description: "Discussion hebdomadaire en famille",
-    platform: "Google Meet",
-    participants: [
-      {
-        id: "1",
-        name: "Emma",
-        avatar: "/placeholder.svg",
-        confirmed: true,
-      },
-      {
-        id: "2",
-        name: "Lucas",
-        avatar: "/placeholder.svg",
-        confirmed: null,
-      },
-      {
-        id: "3",
-        name: "Sophie",
-        avatar: "/placeholder.svg",
-        confirmed: null,
-      },
-    ],
-  },
-  {
-    id: "2",
-    title: "Cours de musique",
-    start: new Date(2024, 2, 20, 10, 0),
-    end: new Date(2024, 2, 20, 11, 30),
-    color: "event-lucas",
-    description: "Cours de piano hebdomadaire",
-    participants: [
-      {
-        id: "2",
-        name: "Lucas",
-        avatar: "/placeholder.svg",
-        confirmed: true,
-      },
-    ],
-  },
-];
+import { useEvents } from "@/hooks/useEvents";
+import { Skeleton } from "@/components/ui/skeleton";
 
 export const WeekCalendar = () => {
-  const [selectedEvent, setSelectedEvent] = useState<Event | null>(null);
+  const { events, isLoading, updateEventParticipant } = useEvents();
+  const [selectedEvent, setSelectedEvent] = useState(null);
   const [currentWeek, setCurrentWeek] = useState(startOfWeek(new Date(), { locale: fr }));
 
   const hours = Array.from({ length: 12 }, (_, i) => i + 8); // 8h à 20h
   const days = Array.from({ length: 7 }, (_, i) => addDays(currentWeek, i));
 
   const getEventsForCell = (day: Date, hour: number) => {
+    if (!events) return [];
+    
     return events.filter((event) => {
-      const eventHour = event.start.getHours();
+      const eventDate = parseISO(event.start_date);
+      const eventHour = eventDate.getHours();
       return (
-        format(event.start, "yyyy-MM-dd") === format(day, "yyyy-MM-dd") &&
+        format(eventDate, "yyyy-MM-dd") === format(day, "yyyy-MM-dd") &&
         eventHour === hour
       );
     });
@@ -98,6 +37,10 @@ export const WeekCalendar = () => {
   const previousWeek = () => {
     setCurrentWeek(current => addDays(current, -7));
   };
+
+  if (isLoading) {
+    return <Skeleton className="h-[600px] w-full" />;
+  }
 
   return (
     <div className="space-y-6">
@@ -175,7 +118,7 @@ export const WeekCalendar = () => {
                         <div
                           key={event.id}
                           onClick={() => setSelectedEvent(event)}
-                          className={`absolute inset-x-2 p-2 rounded-lg cursor-pointer transition-all ${event.color}`}
+                          className={`absolute inset-x-2 p-2 rounded-lg cursor-pointer transition-all ${event.participants[0]?.color || "bg-gray-100"}`}
                           style={{
                             top: "8px",
                             minHeight: "40px",
@@ -219,7 +162,13 @@ export const WeekCalendar = () => {
         event={selectedEvent}
         onClose={() => setSelectedEvent(null)}
         onConfirm={(confirmed) => {
-          console.log("Confirmation:", confirmed);
+          if (selectedEvent) {
+            updateEventParticipant.mutate({
+              eventId: selectedEvent.id,
+              memberId: selectedEvent.participants[0].id, // À améliorer pour gérer plusieurs participants
+              confirmed,
+            });
+          }
           setSelectedEvent(null);
         }}
       />

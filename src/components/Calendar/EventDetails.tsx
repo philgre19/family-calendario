@@ -1,7 +1,7 @@
 
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { format } from "date-fns";
+import { format, parseISO } from "date-fns";
 import { fr } from "date-fns/locale";
 import { Check, X } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -9,18 +9,16 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 interface Event {
   id: string;
   title: string;
-  start: Date;
-  end: Date;
-  color: string;
-  participants: Participant[];
-  description: string;
-}
-
-interface Participant {
-  id: string;
-  name: string;
-  avatar: string;
-  confirmed?: boolean;
+  start_date: string;
+  end_date: string;
+  description: string | null;
+  platform: string | null;
+  participants: Array<{
+    id: string;
+    name: string;
+    avatar: string;
+    confirmed: boolean | null;
+  }>;
 }
 
 interface EventDetailsProps {
@@ -42,10 +40,10 @@ export const EventDetails = ({ event, onClose, onConfirm }: EventDetailsProps) =
         <div className="space-y-6 py-4">
           <div className="flex items-center gap-4 text-sm text-gray-500">
             <div>
-              {format(event.start, "EEEE d MMMM", { locale: fr })}
+              {format(parseISO(event.start_date), "EEEE d MMMM", { locale: fr })}
             </div>
             <div>
-              {format(event.start, "HH:mm")} - {format(event.end, "HH:mm")}
+              {format(parseISO(event.start_date), "HH:mm")} - {format(parseISO(event.end_date), "HH:mm")}
             </div>
           </div>
 
