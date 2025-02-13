@@ -9,6 +9,7 @@ interface EventWithParticipants extends Event {
     name: string;
     avatar: string;
     confirmed: boolean | null;
+    color: string;
   }>;
 }
 
@@ -48,6 +49,7 @@ export const useEvents = () => {
               name: member?.name || "",
               avatar: member?.avatar_url || "",
               confirmed: ep.confirmed,
+              color: member?.color || "",
             };
           }) || [],
         };

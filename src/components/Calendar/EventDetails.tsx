@@ -18,6 +18,7 @@ interface Event {
     name: string;
     avatar: string;
     confirmed: boolean | null;
+    color: string;
   }>;
 }
 
