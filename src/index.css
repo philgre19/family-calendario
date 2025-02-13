@@ -14,11 +14,15 @@
     --popover: 0 0% 100%;
     --popover-foreground: 222.2 84% 4.9%;
  
-    --primary: 346 100% 94%;
-    --primary-foreground: 346 100% 30%;
- 
-    --secondary: 199 100% 94%;
-    --secondary-foreground: 199 100% 30%;
+    /* Couleurs par membre de la famille */
+    --emma-color: 346 89% 88%;
+    --emma-color-hover: 346 89% 82%;
+    
+    --lucas-color: 187 89% 88%;
+    --lucas-color-hover: 187 89% 82%;
+    
+    --sophie-color: 262 89% 88%;
+    --sophie-color-hover: 262 89% 82%;
  
     --muted: 210 40% 96.1%;
     --muted-foreground: 215.4 16.3% 46.9%;
@@ -51,7 +55,20 @@
 }
 
 .sidebar-link.active {
-  @apply bg-primary text-primary-foreground;
+  @apply bg-[hsl(var(--emma-color))] text-[hsl(var(--emma-color-hover))];
+}
+
+/* Couleurs des événements */
+.event-emma {
+  @apply bg-[hsl(var(--emma-color))] hover:bg-[hsl(var(--emma-color-hover))];
+}
+
+.event-lucas {
+  @apply bg-[hsl(var(--lucas-color))] hover:bg-[hsl(var(--lucas-color-hover))];
+}
+
+.event-sophie {
+  @apply bg-[hsl(var(--sophie-color))] hover:bg-[hsl(var(--sophie-color-hover))];
 }
 
 /* Animations */

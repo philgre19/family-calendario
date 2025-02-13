@@ -22,6 +22,9 @@ const Index = () => {
                 </Button>
               ))}
             </div>
+            <Button className="bg-[hsl(var(--emma-color))] hover:bg-[hsl(var(--emma-color-hover))] text-[hsl(var(--emma-color-hover))]">
+              Ajouter un événement
+            </Button>
           </div>
         </div>
 
