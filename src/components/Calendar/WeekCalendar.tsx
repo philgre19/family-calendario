@@ -3,28 +3,28 @@ import { useState } from "react";
 import { format, addDays, startOfWeek, parseISO } from "date-fns";
 import { fr } from "date-fns/locale";
 import { EventDetails } from "./EventDetails";
-import { useEvents } from "@/hooks/useEvents";
+import { useCalendarItems } from "@/hooks/useCalendarItems";
 import { Skeleton } from "@/components/ui/skeleton";
 import { CalendarNavigation } from "./CalendarNavigation";
 import { CalendarEventCard } from "./CalendarEventCard";
 
 export const WeekCalendar = () => {
-  const { events, isLoading, updateEventParticipant } = useEvents();
+  const { data: items = [], isLoading } = useCalendarItems();
   const [selectedEvent, setSelectedEvent] = useState(null);
   const [currentWeek, setCurrentWeek] = useState(startOfWeek(new Date(), { locale: fr }));
 
   const hours = Array.from({ length: 12 }, (_, i) => i + 8); // 8h à 20h
   const days = Array.from({ length: 7 }, (_, i) => addDays(currentWeek, i));
 
-  const getEventsForCell = (day: Date, hour: number) => {
-    if (!events) return [];
+  const getItemsForCell = (day: Date, hour: number) => {
+    if (!items) return [];
     
-    return events.filter((event) => {
-      const eventDate = parseISO(event.start_date);
-      const eventHour = eventDate.getHours();
+    return items.filter((item) => {
+      const itemDate = parseISO(item.start_date);
+      const itemHour = itemDate.getHours();
       return (
-        format(eventDate, "yyyy-MM-dd") === format(day, "yyyy-MM-dd") &&
-        eventHour === hour
+        format(itemDate, "yyyy-MM-dd") === format(day, "yyyy-MM-dd") &&
+        itemHour === hour
       );
     });
   };
@@ -76,17 +76,17 @@ export const WeekCalendar = () => {
             {days.map((day) => (
               <div key={day.toString()} className="space-y-2">
                 {hours.map((hour) => {
-                  const cellEvents = getEventsForCell(day, hour);
+                  const cellItems = getItemsForCell(day, hour);
                   return (
                     <div
                       key={`${day}-${hour}`}
                       className="h-24 p-2 bg-white rounded-lg shadow-sm relative group transition-all hover:shadow-md"
                     >
-                      {cellEvents.map((event) => (
+                      {cellItems.map((item) => (
                         <CalendarEventCard
-                          key={event.id}
-                          event={event}
-                          onClick={() => setSelectedEvent(event)}
+                          key={item.id}
+                          event={item}
+                          onClick={() => setSelectedEvent(item)}
                         />
                       ))}
                     </div>
@@ -103,13 +103,9 @@ export const WeekCalendar = () => {
         onClose={() => setSelectedEvent(null)}
         onConfirm={(confirmed) => {
           if (selectedEvent) {
-            updateEventParticipant.mutate({
-              eventId: selectedEvent.id,
-              memberId: selectedEvent.participants[0].id,
-              confirmed,
-            });
+            // TODO: Implement confirmation logic
+            setSelectedEvent(null);
           }
-          setSelectedEvent(null);
         }}
       />
     </div>
