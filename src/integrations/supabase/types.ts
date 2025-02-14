@@ -54,6 +54,7 @@ export type Database = {
           description: string | null
           end_date: string
           id: string
+          participants: string[] | null
           platform: string | null
           start_date: string
           title: string
@@ -63,6 +64,7 @@ export type Database = {
           description?: string | null
           end_date: string
           id?: string
+          participants?: string[] | null
           platform?: string | null
           start_date: string
           title: string
@@ -72,6 +74,7 @@ export type Database = {
           description?: string | null
           end_date?: string
           id?: string
+          participants?: string[] | null
           platform?: string | null
           start_date?: string
           title?: string
@@ -107,24 +110,30 @@ export type Database = {
           assigned_to: string | null
           completed: boolean | null
           created_at: string
+          date: string | null
           description: string
           id: string
+          members_ids: string[] | null
           points: number | null
         }
         Insert: {
           assigned_to?: string | null
           completed?: boolean | null
           created_at?: string
+          date?: string | null
           description: string
           id?: string
+          members_ids?: string[] | null
           points?: number | null
         }
         Update: {
           assigned_to?: string | null
           completed?: boolean | null
           created_at?: string
+          date?: string | null
           description?: string
           id?: string
+          members_ids?: string[] | null
           points?: number | null
         }
         Relationships: [
