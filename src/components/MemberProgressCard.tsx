@@ -37,12 +37,16 @@ export const MemberProgressCard = ({
         </div>
       </div>
       
-      <Progress
-        value={progress}
-        className="h-2"
-        style={{ backgroundColor: `${member.color}20` }}
-        indicatorStyle={{ backgroundColor: member.color }}
-      />
+      <div className="relative w-full">
+        <Progress
+          value={progress}
+          className="h-2"
+          style={{
+            backgroundColor: `${member.color}20`,
+            '--progress-foreground': member.color
+          } as React.CSSProperties}
+        />
+      </div>
       
       <div className="mt-2 text-sm font-medium" style={{ color: member.color }}>
         ⭐ {points} points
