@@ -24,8 +24,9 @@ export const CalendarEventCard = ({ event, onClick }: CalendarEventCardProps) =>
   return (
     <div
       onClick={onClick}
-      className={`absolute inset-x-2 p-2 rounded-lg cursor-pointer transition-all ${event.participants[0]?.color || "bg-gray-100"}`}
+      className="absolute inset-x-2 p-2 rounded-lg cursor-pointer transition-all"
       style={{
+        backgroundColor: `${event.participants[0]?.color}20`,
         top: "8px",
         minHeight: "40px",
       }}
