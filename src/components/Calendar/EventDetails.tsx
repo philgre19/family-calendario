@@ -3,14 +3,18 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/u
 import { Button } from "@/components/ui/button";
 import { format, parseISO } from "date-fns";
 import { fr } from "date-fns/locale";
-import { Check, X } from "lucide-react";
+import { Check, X, Calendar, CheckSquare } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { supabase } from "@/integrations/supabase/client";
+import { useQueryClient } from "@tanstack/react-query";
+import { toast } from "sonner";
 
 interface Event {
   id: string;
   title: string;
   start_date: string;
-  end_date: string;
+  end_date?: string;
+  type: "event" | "task";
   description: string | null;
   platform: string | null;
   participants: Array<{
@@ -29,13 +33,47 @@ interface EventDetailsProps {
 }
 
 export const EventDetails = ({ event, onClose, onConfirm }: EventDetailsProps) => {
+  const queryClient = useQueryClient();
+  const Icon = event?.type === "event" ? Calendar : CheckSquare;
+
+  const handleConfirm = async (confirmed: boolean) => {
+    if (!event) return;
+
+    try {
+      if (event.type === "event") {
+        await supabase
+          .from("event_participants")
+          .upsert({
+            event_id: event.id,
+            member_id: event.participants[0].id,
+            confirmed
+          });
+      } else {
+        await supabase
+          .from("tasks")
+          .update({ completed: confirmed })
+          .eq("id", event.id);
+      }
+
+      queryClient.invalidateQueries({ queryKey: ["calendar-items"] });
+      toast.success(confirmed ? "Participation confirmée !" : "Participation refusée");
+      onConfirm(confirmed);
+    } catch (error) {
+      toast.error("Une erreur est survenue");
+      console.error(error);
+    }
+  };
+
   if (!event) return null;
 
   return (
     <Dialog open={!!event} onOpenChange={() => onClose()}>
       <DialogContent className="sm:max-w-lg">
         <DialogHeader>
-          <DialogTitle>{event.title}</DialogTitle>
+          <div className="flex items-center gap-2">
+            <Icon className="h-5 w-5" style={{ color: event.participants[0]?.color }} />
+            <DialogTitle>{event.title}</DialogTitle>
+          </div>
         </DialogHeader>
 
         <div className="space-y-6 py-4">
@@ -43,15 +81,21 @@ export const EventDetails = ({ event, onClose, onConfirm }: EventDetailsProps) =
             <div>
               {format(parseISO(event.start_date), "EEEE d MMMM", { locale: fr })}
             </div>
-            <div>
-              {format(parseISO(event.start_date), "HH:mm")} - {format(parseISO(event.end_date), "HH:mm")}
-            </div>
+            {event.type === "event" && event.end_date && (
+              <div>
+                {format(parseISO(event.start_date), "HH:mm")} - {format(parseISO(event.end_date), "HH:mm")}
+              </div>
+            )}
           </div>
 
-          <div className="text-sm">{event.description}</div>
+          {event.description && (
+            <div className="text-sm">{event.description}</div>
+          )}
 
           <div className="space-y-3">
-            <div className="font-medium">Participants</div>
+            <div className="font-medium">
+              {event.type === "event" ? "Participants" : "Membres"}
+            </div>
             <div className="flex flex-wrap gap-3">
               {event.participants.map((participant) => (
                 <div
@@ -80,18 +124,18 @@ export const EventDetails = ({ event, onClose, onConfirm }: EventDetailsProps) =
           <div className="flex justify-end gap-3">
             <Button
               variant="outline"
-              onClick={() => onConfirm(false)}
+              onClick={() => handleConfirm(false)}
               className="text-red-600 hover:text-red-700 hover:bg-red-50"
             >
               <X className="mr-2 h-4 w-4" />
-              Je ne peux pas
+              {event.type === "event" ? "Je ne peux pas" : "Non terminée"}
             </Button>
             <Button
-              onClick={() => onConfirm(true)}
+              onClick={() => handleConfirm(true)}
               className="bg-green-600 hover:bg-green-700 text-white"
             >
               <Check className="mr-2 h-4 w-4" />
-              Je confirme
+              {event.type === "event" ? "Je confirme" : "Terminée"}
             </Button>
           </div>
         </div>
