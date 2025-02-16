@@ -5,3 +5,4 @@ export const SIDEBAR_WIDTH = "4rem"
 export const SIDEBAR_WIDTH_MOBILE = "14rem"
 export const SIDEBAR_WIDTH_ICON = "4rem"
 export const SIDEBAR_KEYBOARD_SHORTCUT = "b"
+
