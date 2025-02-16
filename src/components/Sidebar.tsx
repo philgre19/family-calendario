@@ -1,5 +1,20 @@
 
-import { Calendar, Home, ListTodo, Settings, Sun } from "lucide-react";
+import {
+  Calendar,
+  Home,
+  CheckSquare,
+  Utensils,
+  ShoppingCart,
+  Target,
+  Trophy,
+  Sun,
+  DollarSign,
+  MessageSquare,
+  Image,
+  MapPin,
+  Settings,
+  BarChart
+} from "lucide-react";
 import {
   Sidebar as SidebarContainer,
   SidebarContent,
@@ -15,9 +30,18 @@ import { useLocation, Link } from "react-router-dom";
 const navigation = [
   { name: "Accueil", icon: Home, path: "/" },
   { name: "Calendrier", icon: Calendar, path: "/calendar" },
-  { name: "Tâches", icon: ListTodo, path: "/tasks" },
+  { name: "Tâches & Corvées", icon: CheckSquare, path: "/tasks" },
+  { name: "Planification des Repas", icon: Utensils, path: "/meal-planning" },
+  { name: "Liste de Courses", icon: ShoppingCart, path: "/shopping-list" },
+  { name: "Suivi des Habitudes", icon: Target, path: "/habits" },
+  { name: "Gamification & Récompenses", icon: Trophy, path: "/rewards" },
   { name: "Météo", icon: Sun, path: "/weather" },
+  { name: "Tableau Financier", icon: DollarSign, path: "/finances" },
+  { name: "Messagerie Familiale", icon: MessageSquare, path: "/messages" },
+  { name: "Album Photo & Moments", icon: Image, path: "/photos" },
+  { name: "Localisation & Présence", icon: MapPin, path: "/location" },
   { name: "Paramètres", icon: Settings, path: "/settings" },
+  { name: "Statistiques & Analyses", icon: BarChart, path: "/statistics" },
 ];
 
 export const Sidebar = () => {
