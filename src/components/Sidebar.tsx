@@ -59,9 +59,7 @@ export const Sidebar = () => {
                   <SidebarMenuButton asChild>
                     <Link
                       to={item.path}
-                      className={`sidebar-link ${
-                        location.pathname === item.path ? "active" : ""
-                      }`}
+                      className="sidebar-link active"
                     >
                       <item.icon className="h-5 w-5" />
                       <span>{item.name}</span>
