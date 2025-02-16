@@ -20,7 +20,6 @@ import {
   SidebarContent,
   SidebarGroup,
   SidebarGroupContent,
-  SidebarGroupLabel,
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
@@ -51,7 +50,6 @@ export const Sidebar = () => {
     <SidebarContainer>
       <SidebarContent>
         <SidebarGroup>
-          <SidebarGroupLabel>Menu</SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
               {navigation.map((item) => (
@@ -62,12 +60,11 @@ export const Sidebar = () => {
                   >
                     <Link
                       to={item.path}
-                      className={`sidebar-link ${
+                      className={`sidebar-link flex justify-center ${
                         location.pathname === item.path ? "active" : ""
                       }`}
                     >
                       <item.icon className="h-5 w-5" />
-                      <span>{item.name}</span>
                     </Link>
                   </SidebarMenuButton>
                 </SidebarMenuItem>
