@@ -20,6 +20,7 @@ import {
   SidebarContent,
   SidebarGroup,
   SidebarGroupContent,
+  SidebarGroupLabel,
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
@@ -50,21 +51,20 @@ export const Sidebar = () => {
     <SidebarContainer>
       <SidebarContent>
         <SidebarGroup>
+          <SidebarGroupLabel>Menu</SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
               {navigation.map((item) => (
                 <SidebarMenuItem key={item.name}>
-                  <SidebarMenuButton 
-                    asChild 
-                    tooltip={item.name}
-                  >
+                  <SidebarMenuButton asChild>
                     <Link
                       to={item.path}
-                      className={`sidebar-link flex justify-center ${
+                      className={`sidebar-link ${
                         location.pathname === item.path ? "active" : ""
                       }`}
                     >
                       <item.icon className="h-5 w-5" />
+                      <span>{item.name}</span>
                     </Link>
                   </SidebarMenuButton>
                 </SidebarMenuItem>
