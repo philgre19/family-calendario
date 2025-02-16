@@ -26,6 +26,12 @@ import {
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
 import { useLocation, Link } from "react-router-dom";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 const navigation = [
   { name: "Accueil", icon: Home, path: "/dashboard" },
@@ -48,31 +54,41 @@ export const Sidebar = () => {
   const location = useLocation();
 
   return (
-    <SidebarContainer>
-      <SidebarContent>
-        <SidebarGroup>
-          <SidebarGroupLabel>Menu</SidebarGroupLabel>
-          <SidebarGroupContent>
-            <SidebarMenu>
-              {navigation.map((item) => (
-                <SidebarMenuItem key={item.name}>
-                  <SidebarMenuButton asChild>
-                    <Link
-                      to={item.path}
-                      className={`sidebar-link ${
-                        location.pathname === item.path ? "active" : ""
-                      }`}
-                    >
-                      <item.icon className="h-5 w-5" />
-                      <span>{item.name}</span>
-                    </Link>
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
-              ))}
-            </SidebarMenu>
-          </SidebarGroupContent>
-        </SidebarGroup>
-      </SidebarContent>
-    </SidebarContainer>
+    <TooltipProvider>
+      <SidebarContainer>
+        <SidebarContent>
+          <SidebarGroup>
+            <SidebarGroupLabel className="sr-only">Menu</SidebarGroupLabel>
+            <SidebarGroupContent>
+              <SidebarMenu>
+                {navigation.map((item) => (
+                  <SidebarMenuItem key={item.name}>
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <SidebarMenuButton asChild>
+                          <Link
+                            to={item.path}
+                            className={`sidebar-link ${
+                              location.pathname === item.path ? "active" : ""
+                            }`}
+                          >
+                            <item.icon className="h-5 w-5" />
+                            <span className="sr-only">{item.name}</span>
+                          </Link>
+                        </SidebarMenuButton>
+                      </TooltipTrigger>
+                      <TooltipContent side="right">
+                        {item.name}
+                      </TooltipContent>
+                    </Tooltip>
+                  </SidebarMenuItem>
+                ))}
+              </SidebarMenu>
+            </SidebarGroupContent>
+          </SidebarGroup>
+        </SidebarContent>
+      </SidebarContainer>
+    </TooltipProvider>
   );
 };
+
