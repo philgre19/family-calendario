@@ -2,10 +2,21 @@
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { Toaster } from "@/components/ui/sonner";
-import Index from "@/pages/Index";
+
+import Dashboard from "@/pages/Dashboard";
+import Calendar from "@/pages/Calendar";
 import Tasks from "@/pages/Tasks";
-import AddTask from "@/pages/AddTask";
-import AddEvent from "@/pages/AddEvent";
+import Meals from "@/pages/Meals";
+import ShoppingList from "@/pages/ShoppingList";
+import Habits from "@/pages/Habits";
+import Gamification from "@/pages/Gamification";
+import Weather from "@/pages/Weather";
+import Finance from "@/pages/Finance";
+import Chat from "@/pages/Chat";
+import Gallery from "@/pages/Gallery";
+import Location from "@/pages/Location";
+import Settings from "@/pages/Settings";
+import Stats from "@/pages/Stats";
 import NotFound from "@/pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -13,19 +24,63 @@ const queryClient = new QueryClient();
 const router = createBrowserRouter([
   {
     path: "/",
-    element: <Index />,
+    element: <Dashboard />,
+  },
+  {
+    path: "/dashboard",
+    element: <Dashboard />,
+  },
+  {
+    path: "/calendar",
+    element: <Calendar />,
   },
   {
     path: "/tasks",
     element: <Tasks />,
   },
   {
-    path: "/ajouter-tache",
-    element: <AddTask />,
+    path: "/meals",
+    element: <Meals />,
   },
   {
-    path: "/ajouter-evenement",
-    element: <AddEvent />,
+    path: "/shopping-list",
+    element: <ShoppingList />,
+  },
+  {
+    path: "/habits",
+    element: <Habits />,
+  },
+  {
+    path: "/gamification",
+    element: <Gamification />,
+  },
+  {
+    path: "/weather",
+    element: <Weather />,
+  },
+  {
+    path: "/finance",
+    element: <Finance />,
+  },
+  {
+    path: "/chat",
+    element: <Chat />,
+  },
+  {
+    path: "/gallery",
+    element: <Gallery />,
+  },
+  {
+    path: "/location",
+    element: <Location />,
+  },
+  {
+    path: "/settings",
+    element: <Settings />,
+  },
+  {
+    path: "/stats",
+    element: <Stats />,
   },
   {
     path: "*",
