@@ -1,43 +1,47 @@
 
+@import url('https://fonts.googleapis.com/css2?family=Nunito:wght@300;400;500;600;700&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
  
 @layer base {
   :root {
-    --background: 0 0% 98%;
-    --foreground: 222.2 84% 4.9%;
+    /* Couleurs de base */
+    --background: 204 31% 86%; /* #C6DDF0 */
+    --foreground: 222 47% 11%;
+    
+    /* Couleurs pastel */
+    --pastel-pink: 315 59% 90%; /* #F4D7ED */
+    --pastel-blue: 203 67% 91%; /* #D6EAF8 */
+    --pastel-yellow: 60 100% 95%; /* #FFF9C4 */
+    --pastel-orange: 36 100% 85%; /* #FFE0B2 */
+    --pastel-purple: 288 47% 83%; /* #E1BEE7 */
+    --pastel-green: 146 45% 88%; /* #D4EFDF */
 
+    /* Couleurs système */
     --card: 0 0% 100%;
     --card-foreground: 222.2 84% 4.9%;
- 
     --popover: 0 0% 100%;
     --popover-foreground: 222.2 84% 4.9%;
- 
-    /* Couleurs par membre de la famille */
-    --emma-color: 346 89% 88%;
-    --emma-color-hover: 346 89% 82%;
-    
-    --lucas-color: 187 89% 88%;
-    --lucas-color-hover: 187 89% 82%;
-    
-    --sophie-color: 262 89% 88%;
-    --sophie-color-hover: 262 89% 82%;
- 
     --muted: 210 40% 96.1%;
     --muted-foreground: 215.4 16.3% 46.9%;
- 
     --accent: 210 40% 96.1%;
     --accent-foreground: 222.2 47.4% 11.2%;
- 
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 210 40% 98%;
-
     --border: 214.3 31.8% 91.4%;
     --input: 214.3 31.8% 91.4%;
     --ring: 222.2 84% 4.9%;
- 
     --radius: 1rem;
+ 
+    /* Couleurs par membre de la famille */
+    --emma-color: var(--pastel-pink);
+    --emma-color-hover: 315 59% 85%;
+    --lucas-color: var(--pastel-blue);
+    --lucas-color-hover: 203 67% 86%;
+    --sophie-color: var(--pastel-purple);
+    --sophie-color-hover: 288 47% 78%;
   }
 }
  
@@ -46,56 +50,76 @@
     @apply border-border;
   }
   body {
-    @apply bg-background text-foreground antialiased;
+    @apply bg-[hsl(var(--background))] text-foreground antialiased font-nunito;
   }
 }
 
+/* Styles du menu latéral */
 .sidebar-link {
-  @apply flex items-center justify-center rounded-lg p-2 text-gray-600 transition-all hover:bg-gray-100 w-10 h-10;
+  @apply flex items-center justify-center rounded-lg p-2 text-gray-500 transition-all 
+         hover:bg-white/50 hover:text-gray-900 backdrop-blur-sm w-10 h-10 
+         hover:shadow-sm;
 }
 
 .sidebar-link.active {
-  @apply bg-white text-gray-900 font-medium shadow-sm;
+  @apply bg-white text-gray-900 shadow-sm;
 }
 
-/* Couleurs des événements */
+/* Styles des événements */
+.calendar-event {
+  @apply rounded-xl shadow-sm transition-all duration-300 p-3 cursor-pointer
+         hover:shadow-md hover:translate-y-[-2px];
+}
+
 .event-emma {
-  @apply bg-[hsl(var(--emma-color))] hover:bg-[hsl(var(--emma-color-hover))];
+  @apply bg-[hsl(var(--pastel-pink))];
 }
 
 .event-lucas {
-  @apply bg-[hsl(var(--lucas-color))] hover:bg-[hsl(var(--lucas-color-hover))];
+  @apply bg-[hsl(var(--pastel-blue))];
 }
 
 .event-sophie {
-  @apply bg-[hsl(var(--sophie-color))] hover:bg-[hsl(var(--sophie-color-hover))];
+  @apply bg-[hsl(var(--pastel-purple))];
 }
 
 /* Animations */
 .fade-in {
-  animation: fadeIn 0.5s ease-in-out;
+  @apply animate-fade-in;
 }
 
-@keyframes fadeIn {
+.slide-in {
+  @apply animate-slide-in;
+}
+
+.scale-in {
+  @apply animate-scale-in;
+}
+
+@keyframes fade-in {
   from { opacity: 0; transform: translateY(10px); }
   to { opacity: 1; transform: translateY(0); }
 }
 
-.slide-in {
-  animation: slideIn 0.3s ease-out;
-}
-
-@keyframes slideIn {
+@keyframes slide-in {
   from { transform: translateX(-20px); opacity: 0; }
   to { transform: translateX(0); opacity: 1; }
 }
 
-.scale-in {
-  animation: scaleIn 0.2s ease-out;
-}
-
-@keyframes scaleIn {
+@keyframes scale-in {
   from { transform: scale(0.95); opacity: 0; }
   to { transform: scale(1); opacity: 1; }
+}
+
+/* Composants réutilisables */
+.calendar-card {
+  @apply bg-white/80 backdrop-blur-sm rounded-2xl shadow-sm p-6
+         hover:shadow-md transition-all duration-300;
+}
+
+.floating-action-button {
+  @apply fixed bottom-6 right-6 w-14 h-14 rounded-full bg-[hsl(var(--pastel-blue))]
+         flex items-center justify-center text-gray-800 shadow-lg
+         hover:shadow-xl hover:scale-105 transition-all duration-300;
 }
 
