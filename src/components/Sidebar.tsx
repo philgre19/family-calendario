@@ -56,7 +56,10 @@ export const Sidebar = () => {
             <SidebarMenu>
               {navigation.map((item) => (
                 <SidebarMenuItem key={item.name}>
-                  <SidebarMenuButton asChild>
+                  <SidebarMenuButton 
+                    asChild 
+                    tooltip={item.name}
+                  >
                     <Link
                       to={item.path}
                       className={`sidebar-link ${
