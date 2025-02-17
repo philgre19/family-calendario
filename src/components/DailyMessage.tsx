@@ -19,8 +19,8 @@ export const DailyMessage = () => {
   };
 
   return (
-    <div className="bg-white/80 backdrop-blur-sm rounded-xl p-2.5 shadow-sm slide-in-top">
-      <div className="flex items-center justify-between">
+    <div className="bg-white/80 backdrop-blur-sm rounded-xl shadow-sm slide-in-top">
+      <div className="flex items-center justify-between px-4 py-3">
         {isEditing ? (
           <input
             type="text"
@@ -31,7 +31,7 @@ export const DailyMessage = () => {
             autoFocus
           />
         ) : (
-          <p className="text-gray-700 font-medium">{message}</p>
+          <p className="text-gray-700 font-medium flex-1">{message}</p>
         )}
         <div className="flex items-center gap-1.5 ml-4">
           <button
