@@ -16,7 +16,19 @@ import {
   BarChart
 } from "lucide-react";
 
-export const navigation = [
+type NavigationItem = {
+  name: string;
+  icon: typeof Home;
+  path: string;
+  hoverColor: string;
+  badge?: {
+    type: "warning" | "info" | "alert";
+    count?: number;
+    icon?: string;
+  };
+};
+
+export const navigation: NavigationItem[] = [
   { 
     name: "Accueil", 
     icon: Home, 
@@ -35,7 +47,7 @@ export const navigation = [
     path: "/tasks",
     hoverColor: "hover:bg-pastel-orange/50",
     badge: {
-      type: "warning" as const,
+      type: "warning",
       count: 2
     }
   },
@@ -69,7 +81,7 @@ export const navigation = [
     path: "/weather",
     hoverColor: "hover:bg-pastel-blue/50",
     badge: {
-      type: "alert" as const,
+      type: "alert",
       icon: "⚠️"
     }
   },
@@ -85,7 +97,7 @@ export const navigation = [
     path: "/chat",
     hoverColor: "hover:bg-pastel-purple/50",
     badge: {
-      type: "info" as const,
+      type: "info",
       count: 3
     }
   },
@@ -113,4 +125,4 @@ export const navigation = [
     path: "/stats",
     hoverColor: "hover:bg-pastel-purple/50"
   }
-] as const;
+];
