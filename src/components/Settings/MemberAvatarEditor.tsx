@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import { Member } from "@/types/database.types";
@@ -91,8 +90,7 @@ export function MemberAvatarEditor({ member, onClose }: MemberAvatarEditorProps)
       await queryClient.invalidateQueries({ queryKey: ['members'] });
       toast({
         title: "Succès !",
-        description: "Les modifications ont été enregistrées",
-        icon: <Sparkles className="w-4 h-4 text-yellow-500" />
+        description: "Les modifications ont été enregistrées ✨"
       });
       onClose();
     } catch (error) {
