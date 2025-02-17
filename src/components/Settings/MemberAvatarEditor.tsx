@@ -372,4 +372,73 @@ export function MemberAvatarEditor({ member, onClose }: MemberAvatarEditorProps)
         </TabsContent>
 
         <TabsContent value="preferences" className="space-y-6">
-          <div className="space
+          <div className="space-y-6">
+            <div className="space-y-2">
+              <Label htmlFor="age">Âge</Label>
+              <Input
+                id="age"
+                type="number"
+                value={age}
+                onChange={(e) => setAge(e.target.value)}
+                min="0"
+                max="99"
+              />
+            </div>
+
+            <div className="space-y-4">
+              <div className="flex items-center justify-between">
+                <Label htmlFor="quests-participation">Participer aux quêtes</Label>
+                <Switch
+                  id="quests-participation"
+                  checked={participateInQuests}
+                  onCheckedChange={setParticipateInQuests}
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="quest-style">Style de langage</Label>
+                <Select value={questStyle} onValueChange={(value) => setQuestStyle(value as QuestStyle)}>
+                  <SelectTrigger id="quest-style">
+                    <SelectValue placeholder="Choisir un style" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="rpg">Style RPG (Quêtes, Missions, Défis)</SelectItem>
+                    <SelectItem value="neutral">Style neutre (Tâches, Routines, Objectifs)</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
+
+            <div className="space-y-4 pt-4">
+              <div className="space-y-2">
+                <div className="flex items-center justify-between text-sm">
+                  <span>Niveau {member.level || 1}</span>
+                  <span>{member.gold || 0} 🪙</span>
+                </div>
+                <Progress value={((member.xp || 0) / 100) * 100} className="h-2" />
+                <p className="text-xs text-muted-foreground text-center">
+                  {member.xp || 0} / 100 XP
+                </p>
+              </div>
+            </div>
+          </div>
+        </TabsContent>
+      </Tabs>
+
+      <div className="sticky bottom-0 bg-background pt-4 pb-6">
+        <Button 
+          className="w-full" 
+          onClick={handleSave}
+          disabled={isLoading}
+        >
+          {isLoading ? (
+            <Loader className="w-4 h-4 mr-2 animate-spin" />
+          ) : (
+            <Save className="w-4 h-4 mr-2" />
+          )}
+          Enregistrer les modifications
+        </Button>
+      </div>
+    </div>
+  );
+}
