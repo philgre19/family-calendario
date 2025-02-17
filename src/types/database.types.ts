@@ -2,8 +2,15 @@
 export interface Member {
   id: string;
   name: string;
-  avatar_url: string;
+  avatar_url: string | null;
   color: string;
+  avatar_type: 'illustrated' | 'photo';
+  participate_in_quests: boolean;
+  quest_language_style: 'rpg' | 'neutral';
+  current_hair: string | null;
+  current_clothes: string | null;
+  current_accessory: string | null;
+  current_background: string | null;
   level?: number;
   xp?: number;
   gold?: number;
@@ -49,15 +56,18 @@ export interface Badge {
   id: string;
   name: string;
   description: string | null;
+  min_level: number;
   image_url: string | null;
+  type: string;
 }
 
 export interface Cosmetic {
   id: string;
   name: string;
-  type: string;
+  description: string | null;
   price: number;
   image_url: string | null;
+  type: 'hair' | 'clothes' | 'accessory' | 'background';
   min_level: number;
 }
 

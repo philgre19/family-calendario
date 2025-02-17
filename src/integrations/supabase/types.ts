@@ -9,6 +9,69 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
+      badges: {
+        Row: {
+          created_at: string | null
+          description: string | null
+          id: string
+          image_url: string | null
+          min_level: number
+          name: string
+          type: string
+        }
+        Insert: {
+          created_at?: string | null
+          description?: string | null
+          id?: string
+          image_url?: string | null
+          min_level: number
+          name: string
+          type: string
+        }
+        Update: {
+          created_at?: string | null
+          description?: string | null
+          id?: string
+          image_url?: string | null
+          min_level?: number
+          name?: string
+          type?: string
+        }
+        Relationships: []
+      }
+      cosmetics: {
+        Row: {
+          created_at: string | null
+          description: string | null
+          id: string
+          image_url: string | null
+          min_level: number | null
+          name: string
+          price: number
+          type: string
+        }
+        Insert: {
+          created_at?: string | null
+          description?: string | null
+          id?: string
+          image_url?: string | null
+          min_level?: number | null
+          name: string
+          price: number
+          type: string
+        }
+        Update: {
+          created_at?: string | null
+          description?: string | null
+          id?: string
+          image_url?: string | null
+          min_level?: number | null
+          name?: string
+          price?: number
+          type?: string
+        }
+        Relationships: []
+      }
       event_participants: {
         Row: {
           confirmed: boolean | null
@@ -116,29 +179,118 @@ export type Database = {
           },
         ]
       }
+      member_cosmetics: {
+        Row: {
+          cosmetic_id: string | null
+          created_at: string | null
+          id: string
+          is_equipped: boolean | null
+          member_id: string | null
+        }
+        Insert: {
+          cosmetic_id?: string | null
+          created_at?: string | null
+          id?: string
+          is_equipped?: boolean | null
+          member_id?: string | null
+        }
+        Update: {
+          cosmetic_id?: string | null
+          created_at?: string | null
+          id?: string
+          is_equipped?: boolean | null
+          member_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "member_cosmetics_cosmetic_id_fkey"
+            columns: ["cosmetic_id"]
+            isOneToOne: false
+            referencedRelation: "cosmetics"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "member_cosmetics_member_id_fkey"
+            columns: ["member_id"]
+            isOneToOne: false
+            referencedRelation: "members"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       members: {
         Row: {
+          avatar_type: string
           avatar_url: string | null
           color: string
           created_at: string
+          current_accessory: string | null
+          current_background: string | null
+          current_clothes: string | null
+          current_hair: string | null
           id: string
           name: string
+          participate_in_quests: boolean | null
+          quest_language_style: string | null
         }
         Insert: {
+          avatar_type?: string
           avatar_url?: string | null
           color: string
           created_at?: string
+          current_accessory?: string | null
+          current_background?: string | null
+          current_clothes?: string | null
+          current_hair?: string | null
           id?: string
           name: string
+          participate_in_quests?: boolean | null
+          quest_language_style?: string | null
         }
         Update: {
+          avatar_type?: string
           avatar_url?: string | null
           color?: string
           created_at?: string
+          current_accessory?: string | null
+          current_background?: string | null
+          current_clothes?: string | null
+          current_hair?: string | null
           id?: string
           name?: string
+          participate_in_quests?: boolean | null
+          quest_language_style?: string | null
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "members_current_accessory_fkey"
+            columns: ["current_accessory"]
+            isOneToOne: false
+            referencedRelation: "cosmetics"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "members_current_background_fkey"
+            columns: ["current_background"]
+            isOneToOne: false
+            referencedRelation: "cosmetics"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "members_current_clothes_fkey"
+            columns: ["current_clothes"]
+            isOneToOne: false
+            referencedRelation: "cosmetics"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "members_current_hair_fkey"
+            columns: ["current_hair"]
+            isOneToOne: false
+            referencedRelation: "cosmetics"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       tasks: {
         Row: {
