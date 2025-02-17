@@ -1,7 +1,7 @@
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useQueryClient, useQuery } from "@tanstack/react-query";
-import { Member, AvatarItem } from "@/types/database.types";
+import { Member } from "@/types/database.types";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
@@ -13,7 +13,6 @@ import { useToast } from "@/components/ui/use-toast";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { Camera, Upload, Save, Loader } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { Progress } from "@/components/ui/progress";
 
 interface MemberAvatarEditorProps {
   member: Member;
@@ -31,30 +30,11 @@ type QuestStyle = 'rpg' | 'neutral';
 
 export function MemberAvatarEditor({ member, onClose }: MemberAvatarEditorProps) {
   const [isLoading, setIsLoading] = useState(false);
-  const [avatarType, setAvatarType] = useState<'illustrated' | 'photo'>(member.avatar_type);
+  const [avatarType, setAvatarType] = useState<'illustrated' | 'photo'>(member.avatar_type || 'photo');
   const [participateInQuests, setParticipateInQuests] = useState(member.participate_in_quests);
   const [questStyle, setQuestStyle] = useState<QuestStyle>(member.quest_language_style as QuestStyle);
   const [avatarUrl, setAvatarUrl] = useState(member.avatar_url);
-  const [age, setAge] = useState(member.age?.toString() || '');
-  const [currentHair, setCurrentHair] = useState(member.current_hair);
-  const [currentHairColor, setCurrentHairColor] = useState(member.current_hair_color || '#000000');
-  const [currentClothes, setCurrentClothes] = useState(member.current_clothes);
-  const [currentAccessory, setCurrentAccessory] = useState(member.current_accessory);
   const [uploadProgress, setUploadProgress] = useState(0);
-
-  // Charger les éléments d'avatar depuis la base de données
-  const { data: avatarItems = [] } = useQuery({
-    queryKey: ['avatarItems'],
-    queryFn: async () => {
-      const { data, error } = await supabase
-        .from('avatar_items')
-        .select('*')
-        .order('name');
-      
-      if (error) throw error;
-      return data as AvatarItem[];
-    },
-  });
 
   const queryClient = useQueryClient();
   const { toast } = useToast();
@@ -124,7 +104,6 @@ export function MemberAvatarEditor({ member, onClose }: MemberAvatarEditorProps)
     setAvatarType(type);
     if (type === 'illustrated') {
       setAvatarUrl(null);
-      // Réinitialiser les choix d'avatar illustré si nécessaire
     }
   };
 
@@ -137,11 +116,6 @@ export function MemberAvatarEditor({ member, onClose }: MemberAvatarEditorProps)
         avatar_url: avatarUrl,
         participate_in_quests: participateInQuests,
         quest_language_style: questStyle,
-        age: age ? parseInt(age) : null,
-        current_hair: currentHair,
-        current_clothes: currentClothes,
-        current_accessory: currentAccessory,
-        current_hair_color: currentHairColor,
       };
 
       const { error } = await supabase
@@ -183,7 +157,7 @@ export function MemberAvatarEditor({ member, onClose }: MemberAvatarEditorProps)
                 )}
               />
             ) : (
-              <AvatarFallback className="bg-primary/5">
+              <AvatarFallback>
                 <Camera className="w-12 h-12 text-primary/40" />
               </AvatarFallback>
             )}
@@ -199,18 +173,11 @@ export function MemberAvatarEditor({ member, onClose }: MemberAvatarEditorProps)
       </div>
 
       <Tabs defaultValue="avatar" className="space-y-6">
-        <TabsList className="grid grid-cols-3 w-full">
-          <TabsTrigger value="avatar" className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
+        <TabsList className="grid grid-cols-2 w-full">
+          <TabsTrigger value="avatar">
             Avatar
           </TabsTrigger>
-          <TabsTrigger 
-            value="customization" 
-            disabled={avatarType !== 'illustrated'}
-            className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground"
-          >
-            Personnalisation
-          </TabsTrigger>
-          <TabsTrigger value="preferences" className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
+          <TabsTrigger value="preferences">
             Préférences
           </TabsTrigger>
         </TabsList>
@@ -281,110 +248,8 @@ export function MemberAvatarEditor({ member, onClose }: MemberAvatarEditorProps)
           )}
         </TabsContent>
 
-        <TabsContent value="customization" className="space-y-6">
-          <div className="space-y-4">
-            <div className="space-y-2">
-              <Label className="text-sm font-medium">Coiffure</Label>
-              <Select 
-                value={currentHair || ''} 
-                onValueChange={setCurrentHair}
-              >
-                <SelectTrigger className="w-full hover:border-primary/30 focus:ring-2 focus:ring-primary/20">
-                  <SelectValue placeholder="Choisir une coiffure" />
-                </SelectTrigger>
-                <SelectContent>
-                  {avatarItems
-                    .filter(item => item.type === 'hair')
-                    .map((item) => (
-                      <SelectItem key={item.id} value={item.id}>
-                        {item.name}
-                      </SelectItem>
-                    ))}
-                </SelectContent>
-              </Select>
-            </div>
-
-            {currentHair && (
-              <div className="space-y-2">
-                <Label className="text-sm font-medium">Couleur des cheveux</Label>
-                <div className="grid grid-cols-4 gap-2">
-                  {hairColors.map((color) => (
-                    <Button
-                      key={color.value}
-                      type="button"
-                      variant="outline"
-                      className={cn(
-                        "w-full h-8 rounded-full p-0 transition-all",
-                        "hover:ring-2 hover:ring-primary/30",
-                        currentHairColor === color.value && "ring-2 ring-primary"
-                      )}
-                      style={{ backgroundColor: color.value }}
-                      onClick={() => setCurrentHairColor(color.value)}
-                      title={color.name}
-                    />
-                  ))}
-                </div>
-              </div>
-            )}
-
-            <div className="space-y-2">
-              <Label className="text-sm font-medium">Vêtements</Label>
-              <Select 
-                value={currentClothes || ''} 
-                onValueChange={setCurrentClothes}
-              >
-                <SelectTrigger className="w-full hover:border-primary/30 focus:ring-2 focus:ring-primary/20">
-                  <SelectValue placeholder="Choisir des vêtements" />
-                </SelectTrigger>
-                <SelectContent>
-                  {avatarItems
-                    .filter(item => item.type === 'clothes')
-                    .map((item) => (
-                      <SelectItem key={item.id} value={item.id}>
-                        {item.name}
-                      </SelectItem>
-                    ))}
-                </SelectContent>
-              </Select>
-            </div>
-
-            <div className="space-y-2">
-              <Label className="text-sm font-medium">Accessoires</Label>
-              <Select 
-                value={currentAccessory || ''} 
-                onValueChange={setCurrentAccessory}
-              >
-                <SelectTrigger className="w-full hover:border-primary/30 focus:ring-2 focus:ring-primary/20">
-                  <SelectValue placeholder="Choisir un accessoire" />
-                </SelectTrigger>
-                <SelectContent>
-                  {avatarItems
-                    .filter(item => item.type === 'accessory')
-                    .map((item) => (
-                      <SelectItem key={item.id} value={item.id}>
-                        {item.name}
-                      </SelectItem>
-                    ))}
-                </SelectContent>
-              </Select>
-            </div>
-          </div>
-        </TabsContent>
-
         <TabsContent value="preferences" className="space-y-6">
           <div className="space-y-6">
-            <div className="space-y-2">
-              <Label htmlFor="age">Âge</Label>
-              <Input
-                id="age"
-                type="number"
-                value={age}
-                onChange={(e) => setAge(e.target.value)}
-                min="0"
-                max="99"
-              />
-            </div>
-
             <div className="space-y-4">
               <div className="flex items-center justify-between">
                 <Label htmlFor="quests-participation">Participer aux quêtes</Label>
@@ -406,19 +271,6 @@ export function MemberAvatarEditor({ member, onClose }: MemberAvatarEditorProps)
                     <SelectItem value="neutral">Style neutre (Tâches, Routines, Objectifs)</SelectItem>
                   </SelectContent>
                 </Select>
-              </div>
-            </div>
-
-            <div className="space-y-4 pt-4">
-              <div className="space-y-2">
-                <div className="flex items-center justify-between text-sm">
-                  <span>Niveau {member.level || 1}</span>
-                  <span>{member.gold || 0} 🪙</span>
-                </div>
-                <Progress value={((member.xp || 0) / 100) * 100} className="h-2" />
-                <p className="text-xs text-muted-foreground text-center">
-                  {member.xp || 0} / 100 XP
-                </p>
               </div>
             </div>
           </div>
