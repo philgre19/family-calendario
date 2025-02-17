@@ -17,11 +17,13 @@ interface MemberAvatarEditorProps {
   onClose: () => void;
 }
 
+type QuestStyle = 'rpg' | 'neutral';
+
 export function MemberAvatarEditor({ member, onClose }: MemberAvatarEditorProps) {
   const [isLoading, setIsLoading] = useState(false);
-  const [avatarType, setAvatarType] = useState(member.avatar_type);
+  const [avatarType, setAvatarType] = useState<'illustrated' | 'photo'>(member.avatar_type);
   const [participateInQuests, setParticipateInQuests] = useState(member.participate_in_quests);
-  const [questStyle, setQuestStyle] = useState(member.quest_language_style);
+  const [questStyle, setQuestStyle] = useState<QuestStyle>(member.quest_language_style as QuestStyle);
   const [avatarUrl, setAvatarUrl] = useState(member.avatar_url);
   const queryClient = useQueryClient();
   const { toast } = useToast();
@@ -87,6 +89,10 @@ export function MemberAvatarEditor({ member, onClose }: MemberAvatarEditorProps)
     } finally {
       setIsLoading(false);
     }
+  };
+
+  const handleQuestStyleChange = (value: string) => {
+    setQuestStyle(value as QuestStyle);
   };
 
   return (
@@ -172,7 +178,7 @@ export function MemberAvatarEditor({ member, onClose }: MemberAvatarEditorProps)
 
         <div className="space-y-2">
           <Label htmlFor="quest-style">Style de langage</Label>
-          <Select value={questStyle} onValueChange={setQuestStyle}>
+          <Select value={questStyle} onValueChange={handleQuestStyleChange}>
             <SelectTrigger id="quest-style">
               <SelectValue placeholder="Choisir un style" />
             </SelectTrigger>
