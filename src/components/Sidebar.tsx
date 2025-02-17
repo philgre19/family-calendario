@@ -1,8 +1,37 @@
 
-import { Calendar, Home, CheckSquare, Utensils, ShoppingCart, Target, Trophy, Sun, DollarSign, MessageSquare, Image, MapPin, Settings, BarChart } from "lucide-react";
-import { Sidebar as SidebarContainer, SidebarContent, SidebarGroup, SidebarGroupContent, SidebarGroupLabel, SidebarMenu, SidebarMenuButton, SidebarMenuItem } from "@/components/ui/sidebar";
+import {
+  Calendar,
+  Home,
+  CheckSquare,
+  Utensils,
+  ShoppingCart,
+  Target,
+  Trophy,
+  Sun,
+  DollarSign,
+  MessageSquare,
+  Image,
+  MapPin,
+  Settings,
+  BarChart
+} from "lucide-react";
+import {
+  Sidebar as SidebarContainer,
+  SidebarContent,
+  SidebarGroup,
+  SidebarGroupContent,
+  SidebarGroupLabel,
+  SidebarMenu,
+  SidebarMenuButton,
+  SidebarMenuItem,
+} from "@/components/ui/sidebar";
 import { useLocation, Link } from "react-router-dom";
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 const navigation = [
   { 
@@ -108,9 +137,10 @@ export const Sidebar = () => {
 
   return (
     <TooltipProvider>
-      <SidebarContainer className="w-[60px] fixed left-0 top-0 h-screen z-50">
-        <SidebarContent>
-          <SidebarGroup className="bg-[#0f31b3]/90 backdrop-blur-sm px-0 rounded-3xl mx-2 mt-2">
+      <SidebarContainer className="w-[80px] fixed left-0 top-0 h-screen z-50">
+        <SidebarContent className="overflow-hidden">
+          <SidebarGroup className="bg-[#0f31b3]/90 backdrop-blur-sm px-0 rounded-3xl mx-2 mt-2 h-[calc(100vh-1rem)]
+                                  flex flex-col justify-between">
             <SidebarGroupLabel className="sr-only">Menu</SidebarGroupLabel>
             <SidebarGroupContent>
               <SidebarMenu>
@@ -125,14 +155,16 @@ export const Sidebar = () => {
                               location.pathname === item.path ? "active" : ""
                             }`}
                           >
-                            <item.icon className="h-5 w-5 text-gray-100 transition-transform group-hover:scale-110" />
+                            <item.icon className="h-6 w-6 text-gray-100 transition-all duration-200 
+                                                group-hover:scale-110 group-hover:drop-shadow-glow" />
                             <span className="sr-only">{item.name}</span>
                             {item.badge && (
-                              <span className={`absolute -top-1 -right-1 ${
+                              <span className={`badge ${
                                 item.badge.type === 'warning' ? 'bg-red-500' :
                                 item.badge.type === 'info' ? 'bg-blue-500' :
                                 'bg-yellow-500'
-                              } text-white text-xs rounded-full min-w-[18px] h-[18px] flex items-center justify-center p-0.5 scale-in`}>
+                              } text-white min-w-[20px] h-[20px] text-sm font-semibold
+                                ${item.badge.type === 'alert' ? 'animate-pulse' : ''}`}>
                                 {item.badge.count || item.badge.icon}
                               </span>
                             )}
@@ -147,6 +179,7 @@ export const Sidebar = () => {
                 ))}
               </SidebarMenu>
             </SidebarGroupContent>
+            <div className="h-px bg-gradient-to-r from-transparent via-white/20 to-transparent my-4" />
           </SidebarGroup>
         </SidebarContent>
       </SidebarContainer>
