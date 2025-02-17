@@ -11,6 +11,7 @@ import { AvatarDisplay } from "./AvatarDisplay";
 import { AvatarTypeSelector } from "./AvatarTypeSelector";
 import { AvatarUploader } from "./AvatarUploader";
 import { PreferencesForm } from "./PreferencesForm";
+import { IllustratedAvatarEditor } from "./IllustratedAvatarEditor";
 
 interface MemberAvatarEditorProps {
   member: Member;
@@ -26,11 +27,12 @@ export function MemberAvatarEditor({ member, onClose }: MemberAvatarEditorProps)
   const [questStyle, setQuestStyle] = useState<QuestStyle>(member.quest_language_style as QuestStyle);
   const [avatarUrl, setAvatarUrl] = useState(member.avatar_url);
   const [uploadProgress, setUploadProgress] = useState(0);
+  const [illustratedAvatarUpdates, setIllustratedAvatarUpdates] = useState<Partial<Member>>({});
 
   const queryClient = useQueryClient();
   const { toast } = useToast();
 
-  const handleAvatarTypeChange = (type: 'illustrated' | 'photo') => {
+  const handleAvatarTypeChange = async (type: 'illustrated' | 'photo') => {
     setAvatarType(type);
     if (type === 'illustrated') {
       setAvatarUrl(null);
@@ -42,10 +44,19 @@ export function MemberAvatarEditor({ member, onClose }: MemberAvatarEditorProps)
     try {
       const { error: updateError } = await supabase
         .from('members')
-        .update({ avatar_url: url })
+        .update({ 
+          avatar_url: url,
+          avatar_type: 'photo',
+          current_hair: null,
+          current_clothes: null,
+          current_accessory: null,
+          current_hair_color: null
+        })
         .eq('id', member.id);
 
       if (updateError) throw updateError;
+      
+      await queryClient.invalidateQueries({ queryKey: ['members'] });
     } catch (error: any) {
       toast({
         title: "Erreur",
@@ -63,15 +74,25 @@ export function MemberAvatarEditor({ member, onClose }: MemberAvatarEditorProps)
     });
   };
 
+  const handleIllustratedAvatarUpdate = (updates: Partial<Member>) => {
+    setIllustratedAvatarUpdates(prev => ({ ...prev, ...updates }));
+  };
+
   const handleSave = async () => {
     try {
       setIsLoading(true);
 
       const updates = {
         avatar_type: avatarType,
-        avatar_url: avatarUrl,
+        avatar_url: avatarType === 'photo' ? avatarUrl : null,
         participate_in_quests: participateInQuests,
         quest_language_style: questStyle,
+        ...(avatarType === 'illustrated' ? illustratedAvatarUpdates : {
+          current_hair: null,
+          current_clothes: null,
+          current_accessory: null,
+          current_hair_color: null
+        })
       };
 
       const { error } = await supabase
@@ -123,12 +144,17 @@ export function MemberAvatarEditor({ member, onClose }: MemberAvatarEditorProps)
             onTypeChange={handleAvatarTypeChange}
           />
 
-          {avatarType === "photo" && (
+          {avatarType === "photo" ? (
             <AvatarUploader
               member={member}
               isLoading={isLoading}
               onUploadSuccess={handleUploadSuccess}
               onUploadError={handleUploadError}
+            />
+          ) : (
+            <IllustratedAvatarEditor 
+              member={member}
+              onUpdate={handleIllustratedAvatarUpdate}
             />
           )}
         </TabsContent>

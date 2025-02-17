@@ -13,25 +13,34 @@ export type Database = {
         Row: {
           color: string | null
           created_at: string | null
+          display_name: string | null
           id: string
           image_url: string
+          is_premium: boolean | null
           name: string
+          rarity: string | null
           type: string
         }
         Insert: {
           color?: string | null
           created_at?: string | null
+          display_name?: string | null
           id?: string
           image_url: string
+          is_premium?: boolean | null
           name: string
+          rarity?: string | null
           type: string
         }
         Update: {
           color?: string | null
           created_at?: string | null
+          display_name?: string | null
           id?: string
           image_url?: string
+          is_premium?: boolean | null
           name?: string
+          rarity?: string | null
           type?: string
         }
         Relationships: []
