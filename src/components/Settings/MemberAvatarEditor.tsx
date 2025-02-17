@@ -1,6 +1,7 @@
+
 import { useState } from "react";
-import { useQueryClient } from "@tanstack/react-query";
-import { Member } from "@/types/database.types";
+import { useQueryClient, useQuery } from "@tanstack/react-query";
+import { Member, AvatarItem } from "@/types/database.types";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
@@ -10,7 +11,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useToast } from "@/components/ui/use-toast";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
-import { Camera, Upload, Save, Sparkles } from "lucide-react";
+import { Camera, Upload, Save, Loader } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Progress } from "@/components/ui/progress";
 
@@ -18,6 +19,14 @@ interface MemberAvatarEditorProps {
   member: Member;
   onClose: () => void;
 }
+
+const hairColors = [
+  { name: "Noir", value: "#000000" },
+  { name: "Brun", value: "#4A2F1C" },
+  { name: "Châtain", value: "#8B4513" },
+  { name: "Blond", value: "#FFD700" },
+  { name: "Roux", value: "#D35400" },
+];
 
 type QuestStyle = 'rpg' | 'neutral';
 
@@ -29,25 +38,56 @@ export function MemberAvatarEditor({ member, onClose }: MemberAvatarEditorProps)
   const [avatarUrl, setAvatarUrl] = useState(member.avatar_url);
   const [age, setAge] = useState(member.age?.toString() || '');
   const [currentHair, setCurrentHair] = useState(member.current_hair);
+  const [currentHairColor, setCurrentHairColor] = useState(member.current_hair_color || '#000000');
   const [currentClothes, setCurrentClothes] = useState(member.current_clothes);
   const [currentAccessory, setCurrentAccessory] = useState(member.current_accessory);
-  const [currentBackground, setCurrentBackground] = useState(member.current_background);
+  const [uploadProgress, setUploadProgress] = useState(0);
   
+  const { data: avatarItems = [] } = useQuery({
+    queryKey: ['avatar_items'],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('avatar_items')
+        .select('*')
+        .order('name');
+      
+      if (error) throw error;
+      return data as AvatarItem[];
+    },
+  });
+
   const queryClient = useQueryClient();
   const { toast } = useToast();
 
   const handleFileUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
     try {
       setIsLoading(true);
+      setUploadProgress(0);
       const file = event.target.files?.[0];
       if (!file) return;
+
+      // Vérifier la taille du fichier (max 5MB)
+      if (file.size > 5 * 1024 * 1024) {
+        throw new Error("Le fichier est trop volumineux (max 5MB)");
+      }
 
       const fileExt = file.name.split('.').pop();
       const filePath = `${member.id}_${Date.now()}.${fileExt}`;
 
+      // Simuler la progression de l'upload
+      const progressInterval = setInterval(() => {
+        setUploadProgress((prev) => Math.min(prev + 10, 90));
+      }, 100);
+
       const { error: uploadError } = await supabase.storage
         .from('avatars')
-        .upload(filePath, file);
+        .upload(filePath, file, {
+          cacheControl: '3600',
+          upsert: true,
+        });
+
+      clearInterval(progressInterval);
+      setUploadProgress(100);
 
       if (uploadError) throw uploadError;
 
@@ -56,10 +96,13 @@ export function MemberAvatarEditor({ member, onClose }: MemberAvatarEditorProps)
         .getPublicUrl(filePath);
 
       setAvatarUrl(publicUrl);
-    } catch (error) {
+
+      // Reset progress after a short delay
+      setTimeout(() => setUploadProgress(0), 1000);
+    } catch (error: any) {
       toast({
         title: "Erreur",
-        description: "Impossible de télécharger l'image",
+        description: error.message || "Impossible de télécharger l'image",
         variant: "destructive",
       });
     } finally {
@@ -70,22 +113,38 @@ export function MemberAvatarEditor({ member, onClose }: MemberAvatarEditorProps)
   const handleSave = async () => {
     try {
       setIsLoading(true);
+
+      const updates = {
+        avatar_type: avatarType,
+        avatar_url: avatarUrl,
+        participate_in_quests: participateInQuests,
+        quest_language_style: questStyle,
+        age: age ? parseInt(age) : null,
+        current_hair: currentHair,
+        current_clothes: currentClothes,
+        current_accessory: currentAccessory,
+        current_hair_color: currentHairColor,
+      };
+
       const { error } = await supabase
         .from('members')
-        .update({
-          avatar_type: avatarType,
-          avatar_url: avatarUrl,
-          participate_in_quests: participateInQuests,
-          quest_language_style: questStyle,
-          age: age ? parseInt(age) : null,
-          current_hair: currentHair,
-          current_clothes: currentClothes,
-          current_accessory: currentAccessory,
-          current_background: currentBackground,
-        })
+        .update(updates)
         .eq('id', member.id);
 
       if (error) throw error;
+
+      // Mettre à jour les éléments d'avatar du membre
+      if (avatarType === 'illustrated' && (currentHair || currentClothes || currentAccessory)) {
+        const { error: itemsError } = await supabase
+          .from('member_avatar_items')
+          .upsert([
+            { member_id: member.id, item_id: currentHair, color: currentHairColor },
+            { member_id: member.id, item_id: currentClothes },
+            { member_id: member.id, item_id: currentAccessory },
+          ].filter(item => item.item_id));
+
+        if (itemsError) throw itemsError;
+      }
 
       await queryClient.invalidateQueries({ queryKey: ['members'] });
       toast({
@@ -93,10 +152,10 @@ export function MemberAvatarEditor({ member, onClose }: MemberAvatarEditorProps)
         description: "Les modifications ont été enregistrées ✨"
       });
       onClose();
-    } catch (error) {
+    } catch (error: any) {
       toast({
         title: "Erreur",
-        description: "Impossible d'enregistrer les modifications",
+        description: error.message || "Impossible d'enregistrer les modifications",
         variant: "destructive",
       });
     } finally {
@@ -104,29 +163,38 @@ export function MemberAvatarEditor({ member, onClose }: MemberAvatarEditorProps)
     }
   };
 
-  const handleQuestStyleChange = (value: string) => {
-    setQuestStyle(value as QuestStyle);
+  const filterItems = (type: AvatarItem['type']) => {
+    return avatarItems.filter(item => item.type === type);
   };
 
   return (
     <div className="mt-6">
       <div className="flex justify-center mb-8">
-        <Avatar className="w-32 h-32">
-          {avatarUrl ? (
-            <AvatarImage 
-              src={avatarUrl} 
-              alt={member.name} 
-              className={cn(
-                "object-cover",
-                avatarType === "photo" && "rounded-full"
-              )}
-            />
-          ) : (
-            <AvatarFallback>
-              <Camera className="w-12 h-12 text-muted-foreground" />
-            </AvatarFallback>
+        <div className="relative">
+          <Avatar className="w-32 h-32">
+            {avatarUrl ? (
+              <AvatarImage 
+                src={avatarUrl} 
+                alt={member.name} 
+                className={cn(
+                  "object-cover",
+                  avatarType === "photo" && "rounded-full"
+                )}
+              />
+            ) : (
+              <AvatarFallback>
+                <Camera className="w-12 h-12 text-muted-foreground" />
+              </AvatarFallback>
+            )}
+          </Avatar>
+          {uploadProgress > 0 && (
+            <div className="absolute inset-0 flex items-center justify-center bg-black/50 rounded-full">
+              <div className="text-white text-sm font-medium">
+                {uploadProgress}%
+              </div>
+            </div>
           )}
-        </Avatar>
+        </div>
       </div>
 
       <Tabs defaultValue="avatar" className="space-y-6">
@@ -171,11 +239,16 @@ export function MemberAvatarEditor({ member, onClose }: MemberAvatarEditorProps)
                 className="hidden"
                 id="avatar-upload"
                 onChange={handleFileUpload}
+                disabled={isLoading}
               />
               <label htmlFor="avatar-upload">
-                <Button variant="outline" className="cursor-pointer" asChild>
+                <Button variant="outline" className="cursor-pointer" asChild disabled={isLoading}>
                   <span>
-                    <Upload className="w-4 h-4 mr-2" />
+                    {isLoading ? (
+                      <Loader className="w-4 h-4 mr-2 animate-spin" />
+                    ) : (
+                      <Upload className="w-4 h-4 mr-2" />
+                    )}
                     Choisir une photo
                   </span>
                 </Button>
@@ -193,10 +266,36 @@ export function MemberAvatarEditor({ member, onClose }: MemberAvatarEditorProps)
                   <SelectValue placeholder="Choisir une coiffure" />
                 </SelectTrigger>
                 <SelectContent>
-                  {/* Options de coiffure à ajouter */}
+                  {filterItems('hair').map((item) => (
+                    <SelectItem key={item.id} value={item.id}>
+                      {item.name}
+                    </SelectItem>
+                  ))}
                 </SelectContent>
               </Select>
             </div>
+
+            {currentHair && (
+              <div className="space-y-2">
+                <Label>Couleur des cheveux</Label>
+                <div className="grid grid-cols-5 gap-2">
+                  {hairColors.map((color) => (
+                    <Button
+                      key={color.value}
+                      type="button"
+                      variant="outline"
+                      className={cn(
+                        "w-full h-8 rounded-full p-0",
+                        currentHairColor === color.value && "ring-2 ring-primary"
+                      )}
+                      style={{ backgroundColor: color.value }}
+                      onClick={() => setCurrentHairColor(color.value)}
+                      title={color.name}
+                    />
+                  ))}
+                </div>
+              </div>
+            )}
 
             <div className="space-y-2">
               <Label>Vêtements</Label>
@@ -205,7 +304,11 @@ export function MemberAvatarEditor({ member, onClose }: MemberAvatarEditorProps)
                   <SelectValue placeholder="Choisir des vêtements" />
                 </SelectTrigger>
                 <SelectContent>
-                  {/* Options de vêtements à ajouter */}
+                  {filterItems('clothes').map((item) => (
+                    <SelectItem key={item.id} value={item.id}>
+                      {item.name}
+                    </SelectItem>
+                  ))}
                 </SelectContent>
               </Select>
             </div>
@@ -217,19 +320,11 @@ export function MemberAvatarEditor({ member, onClose }: MemberAvatarEditorProps)
                   <SelectValue placeholder="Choisir un accessoire" />
                 </SelectTrigger>
                 <SelectContent>
-                  {/* Options d'accessoires à ajouter */}
-                </SelectContent>
-              </Select>
-            </div>
-
-            <div className="space-y-2">
-              <Label>Fond</Label>
-              <Select value={currentBackground || ''} onValueChange={setCurrentBackground}>
-                <SelectTrigger>
-                  <SelectValue placeholder="Choisir un fond" />
-                </SelectTrigger>
-                <SelectContent>
-                  {/* Options de fond à ajouter */}
+                  {filterItems('accessory').map((item) => (
+                    <SelectItem key={item.id} value={item.id}>
+                      {item.name}
+                    </SelectItem>
+                  ))}
                 </SelectContent>
               </Select>
             </div>
@@ -262,7 +357,7 @@ export function MemberAvatarEditor({ member, onClose }: MemberAvatarEditorProps)
 
               <div className="space-y-2">
                 <Label htmlFor="quest-style">Style de langage</Label>
-                <Select value={questStyle} onValueChange={handleQuestStyleChange}>
+                <Select value={questStyle} onValueChange={(value) => setQuestStyle(value as QuestStyle)}>
                   <SelectTrigger id="quest-style">
                     <SelectValue placeholder="Choisir un style" />
                   </SelectTrigger>
@@ -296,7 +391,11 @@ export function MemberAvatarEditor({ member, onClose }: MemberAvatarEditorProps)
           onClick={handleSave}
           disabled={isLoading}
         >
-          <Save className="w-4 h-4 mr-2" />
+          {isLoading ? (
+            <Loader className="w-4 h-4 mr-2 animate-spin" />
+          ) : (
+            <Save className="w-4 h-4 mr-2" />
+          )}
           Enregistrer les modifications
         </Button>
       </div>

@@ -10,10 +10,29 @@ export interface Member {
   current_clothes: string | null;
   current_accessory: string | null;
   current_background: string | null;
+  current_hair_color: string | null;
+  avatar_items: Record<string, any>;
   level?: number;
   xp?: number;
   gold?: number;
   age?: number;
+}
+
+export interface AvatarItem {
+  id: string;
+  name: string;
+  type: 'hair' | 'clothes' | 'accessory';
+  image_url: string;
+  color?: string | null;
+  created_at: string;
+}
+
+export interface MemberAvatarItem {
+  id: string;
+  member_id: string;
+  item_id: string;
+  color?: string | null;
+  created_at: string;
 }
 
 export interface Event {
