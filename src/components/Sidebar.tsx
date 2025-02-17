@@ -24,11 +24,11 @@ export const Sidebar = () => {
       <SidebarContainer className="w-[90px] fixed left-0 top-0 h-screen z-50">
         <SidebarContent className="h-full flex items-center">
           <SidebarGroup className="bg-[#0f31b3]/90 backdrop-blur-sm px-0 rounded-3xl mx-2 h-[94vh]
-                                  flex flex-col justify-center">
+                                  flex flex-col justify-between py-4">
             <SidebarGroupContent>
               <SidebarMenu>
                 {navigation.map((item) => (
-                  <SidebarMenuItem key={item.name} className="relative my-1">
+                  <SidebarMenuItem key={item.name} className="relative my-0.5">
                     <Tooltip>
                       <TooltipTrigger asChild>
                         <Link
@@ -37,14 +37,14 @@ export const Sidebar = () => {
                             location.pathname === item.path ? "active" : ""
                           }`}
                         >
-                          <item.icon className="h-6 w-6 text-gray-100 transition-all duration-200 
+                          <item.icon className="h-5 w-5 text-gray-100 transition-all duration-200 
                                               group-hover:scale-110 group-hover:drop-shadow-glow" />
                           {item.badge && (
                             <span className={`badge ${
                               item.badge.type === 'warning' ? 'bg-red-500' :
                               item.badge.type === 'info' ? 'bg-blue-500' :
                               'bg-yellow-500'
-                            } text-white text-sm font-semibold
+                            } text-white text-xs font-semibold
                               ${item.badge.type === 'alert' ? 'animate-pulse' : ''}`}>
                               {item.badge.count || item.badge.icon}
                             </span>

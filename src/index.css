@@ -33,10 +33,9 @@
 }
  
 @layer components {
-  /* Menu latéral optimisé */
   .sidebar-link {
-    @apply flex items-center justify-center rounded-lg p-2 text-gray-100 transition-all 
-           backdrop-blur-sm w-[70px] h-[70px] mx-auto relative
+    @apply flex items-center justify-center rounded-lg p-1.5 text-gray-100 transition-all 
+           backdrop-blur-sm w-[50px] h-[50px] mx-auto relative
            hover:shadow-md hover:scale-105 duration-200;
   }
 
@@ -44,14 +43,12 @@
     @apply bg-white/20 text-white shadow-lg;
   }
 
-  /* Composants réutilisables */
   .calendar-card {
     @apply bg-white/80 backdrop-blur-sm rounded-xl p-4 shadow-sm border border-gray-100/20
            hover:shadow-lg transition-all duration-300
            flex flex-col overflow-hidden;
   }
 
-  /* Layout optimisé */
   .dashboard-container {
     @apply h-full flex flex-col;
   }
@@ -60,14 +57,12 @@
     @apply grid gap-4 grid-cols-4;
   }
 
-  /* Tooltip personnalisé */
   .custom-tooltip {
     @apply bg-white/95 backdrop-blur-sm text-gray-800 px-3 py-2 rounded-lg
            shadow-lg font-medium text-sm min-w-[120px] text-center;
   }
 }
 
-/* Animations */
 @keyframes slide-in-right {
   from { transform: translateX(20px); opacity: 0; }
   to { transform: translateX(0); opacity: 1; }
@@ -77,7 +72,6 @@
   animation: slide-in-right 0.2s ease-out;
 }
 
-/* Widget animations */
 .widget-validate {
   animation: widget-bounce 0.15s ease-out;
 }
@@ -88,7 +82,6 @@
   100% { transform: scale(1); }
 }
 
-/* Styles des événements */
 .calendar-event {
   @apply rounded-xl shadow-sm transition-all duration-300 p-3 cursor-pointer
          hover:shadow-md hover:translate-y-[-2px];
@@ -106,7 +99,6 @@
   @apply bg-[hsl(var(--pastel-purple))];
 }
 
-/* Nouvelles animations */
 .badge-pulse {
   animation: badge-pulse 2s infinite;
 }
@@ -155,7 +147,6 @@
   }
 }
 
-/* Styles pour les widgets de gamification */
 .progress-circle {
   transition: stroke-dashoffset 0.5s ease-out;
 }
@@ -179,7 +170,6 @@
   @apply opacity-100;
 }
 
-/* Animations globales */
 @keyframes slide-in-left {
   from { transform: translateX(-100%); opacity: 0; }
   to { transform: translateX(0); opacity: 1; }
@@ -189,9 +179,8 @@
   animation: slide-in-left 0.5s ease-out;
 }
 
-/* Styles du menu latéral */
 .sidebar-link {
-  @apply flex items-center justify-center rounded-lg p-2 text-gray-100 transition-all 
+  @apply flex items-center justify-center rounded-lg p-1.5 text-gray-100 transition-all 
          backdrop-blur-sm w-12 h-12 relative
          hover:shadow-md hover:scale-105 duration-200;
 }
@@ -200,18 +189,15 @@
   @apply bg-white text-blue-600 shadow-md;
 }
 
-/* Styles des badges */
 .badge {
   @apply absolute -top-1 -right-1 flex items-center justify-center
          rounded-full shadow-sm scale-in;
 }
 
-/* Drop shadow pour les icônes */
 .drop-shadow-glow {
   filter: drop-shadow(0 0 4px rgba(255, 255, 255, 0.5));
 }
 
-/* Composants réutilisables */
 .calendar-card {
   @apply bg-white/80 backdrop-blur-sm rounded-2xl shadow-sm p-6
          hover:shadow-md transition-all duration-300;
@@ -223,7 +209,6 @@
          hover:shadow-xl hover:scale-105 transition-all duration-300;
 }
 
-/* Animations */
 .fade-in {
   @apply animate-fade-in;
 }
@@ -251,7 +236,6 @@
   to { transform: scale(1); opacity: 1; }
 }
 
-/* Nouvelles animations */
 @keyframes slide-in-top {
   from { transform: translateY(-20px); opacity: 0; }
   to { transform: translateY(0); opacity: 1; }
@@ -261,7 +245,6 @@
   animation: slide-in-top 0.3s ease-out;
 }
 
-/* Animation confettis */
 @keyframes confetti-pop {
   0% { transform: scale(0) rotate(0deg); opacity: 0; }
   50% { transform: scale(1.2) rotate(180deg); opacity: 1; }
@@ -272,7 +255,6 @@
   animation: confetti-pop 0.5s ease-out forwards;
 }
 
-/* Animation de validation */
 @keyframes validation-bounce {
   0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
   40% { transform: translateY(-10px); }
