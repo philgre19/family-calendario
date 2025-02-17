@@ -46,9 +46,9 @@
 
   /* Composants réutilisables */
   .calendar-card {
-    @apply bg-white/80 backdrop-blur-sm rounded-xl p-4 shadow-sm
-           hover:shadow-lg transition-all duration-300 hover:scale-[1.02]
-           h-full flex flex-col;
+    @apply bg-white/80 backdrop-blur-sm rounded-xl p-4 shadow-sm border border-gray-100/20
+           hover:shadow-lg transition-all duration-300
+           flex flex-col overflow-hidden;
   }
 
   /* Layout optimisé */
