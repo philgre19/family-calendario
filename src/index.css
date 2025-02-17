@@ -34,8 +34,8 @@
  
 @layer components {
   .sidebar-link {
-    @apply flex items-center justify-center rounded-lg p-1.5 text-gray-100 transition-all 
-           backdrop-blur-sm w-[50px] h-[50px] mx-auto relative
+    @apply flex items-center justify-center rounded-lg p-1 text-gray-100 transition-all 
+           backdrop-blur-sm w-9 h-9 mx-auto relative
            hover:shadow-md hover:scale-105 duration-200;
   }
 
@@ -180,7 +180,7 @@
 }
 
 .sidebar-link {
-  @apply flex items-center justify-center rounded-lg p-1.5 text-gray-100 transition-all 
+  @apply flex items-center justify-center rounded-lg p-1 text-gray-100 transition-all 
          backdrop-blur-sm w-12 h-12 relative
          hover:shadow-md hover:scale-105 duration-200;
 }
@@ -190,8 +190,8 @@
 }
 
 .badge {
-  @apply absolute -top-1 -right-1 flex items-center justify-center
-         rounded-full shadow-sm scale-in;
+  @apply absolute -top-1 -right-1 flex items-center justify-center w-4 h-4 min-w-4
+           rounded-full shadow-sm scale-in text-[10px];
 }
 
 .drop-shadow-glow {
