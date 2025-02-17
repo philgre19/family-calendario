@@ -31,9 +31,11 @@ export const useTasks = () => {
       // Mapper les tâches avec les informations des membres assignés
       return tasks?.map((task): TaskWithAssignee => {
         const assignee = members?.find((m) => m.id === task.assigned_to);
+        const questType = task.quest_type as Task['quest_type'] || "mission";
+        
         return {
           ...task,
-          quest_type: task.quest_type || "mission",
+          quest_type: questType,
           xp_reward: task.xp_reward || 0,
           gold_reward: task.gold_reward || 0,
           assignee: assignee
