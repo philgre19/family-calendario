@@ -1,4 +1,10 @@
+
 import { MainLayout } from "@/components/MainLayout";
+import { DailyMessage } from "@/components/DailyMessage";
+import { MorningRoutine } from "@/components/widgets/MorningRoutine";
+import { DailyGoal } from "@/components/widgets/DailyGoal";
+import { FamilyPoints } from "@/components/widgets/FamilyPoints";
+import { ScreenTime } from "@/components/widgets/ScreenTime";
 import { Calendar, CheckSquare, Sun } from "lucide-react";
 
 export default function Dashboard() {
@@ -7,10 +13,11 @@ export default function Dashboard() {
       <div className="container py-6 fade-in">
         <h1 className="text-3xl font-semibold mb-6">Tableau de bord familial</h1>
         
+        <DailyMessage />
+        
         <div className="grid gap-6">
           {/* Section Résumé rapide */}
           <section className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            {/* Événements du jour */}
             <div className="calendar-card group">
               <div className="flex items-center gap-2 mb-4">
                 <Calendar className="h-5 w-5 text-blue-500" />
@@ -26,7 +33,6 @@ export default function Dashboard() {
               </div>
             </div>
 
-            {/* Prochaines tâches */}
             <div className="calendar-card group">
               <div className="flex items-center gap-2 mb-4">
                 <CheckSquare className="h-5 w-5 text-orange-500" />
@@ -40,7 +46,6 @@ export default function Dashboard() {
               </div>
             </div>
 
-            {/* Météo du jour */}
             <div className="calendar-card group">
               <div className="flex items-center gap-2 mb-4">
                 <Sun className="h-5 w-5 text-yellow-500" />
@@ -53,10 +58,17 @@ export default function Dashboard() {
             </div>
           </section>
 
-          {/* Autres widgets à venir */}
-          <div className="grid gap-6">
-            {/* Contenu du tableau de bord à venir */}
-          </div>
+          {/* Section Routine et Objectifs */}
+          <section className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <MorningRoutine />
+            <DailyGoal />
+          </section>
+
+          {/* Section Points et Temps d'écran */}
+          <section className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <FamilyPoints />
+            <ScreenTime />
+          </section>
         </div>
       </div>
     </MainLayout>
