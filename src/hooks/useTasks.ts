@@ -33,6 +33,9 @@ export const useTasks = () => {
         const assignee = members?.find((m) => m.id === task.assigned_to);
         return {
           ...task,
+          quest_type: task.quest_type || "mission",
+          xp_reward: task.xp_reward || 0,
+          gold_reward: task.gold_reward || 0,
           assignee: assignee
             ? {
                 name: assignee.name,

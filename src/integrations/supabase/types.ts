@@ -81,6 +81,41 @@ export type Database = {
         }
         Relationships: []
       }
+      levels: {
+        Row: {
+          created_at: string
+          current_level: number | null
+          current_xp: number | null
+          gold: number | null
+          id: string
+          member_id: string | null
+        }
+        Insert: {
+          created_at?: string
+          current_level?: number | null
+          current_xp?: number | null
+          gold?: number | null
+          id?: string
+          member_id?: string | null
+        }
+        Update: {
+          created_at?: string
+          current_level?: number | null
+          current_xp?: number | null
+          gold?: number | null
+          id?: string
+          member_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "levels_member_id_fkey"
+            columns: ["member_id"]
+            isOneToOne: true
+            referencedRelation: "members"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       members: {
         Row: {
           avatar_url: string | null
@@ -112,9 +147,12 @@ export type Database = {
           created_at: string
           date: string | null
           description: string
+          gold_reward: number | null
           id: string
           members_ids: string[] | null
           points: number | null
+          quest_type: string | null
+          xp_reward: number | null
         }
         Insert: {
           assigned_to?: string | null
@@ -122,9 +160,12 @@ export type Database = {
           created_at?: string
           date?: string | null
           description: string
+          gold_reward?: number | null
           id?: string
           members_ids?: string[] | null
           points?: number | null
+          quest_type?: string | null
+          xp_reward?: number | null
         }
         Update: {
           assigned_to?: string | null
@@ -132,9 +173,12 @@ export type Database = {
           created_at?: string
           date?: string | null
           description?: string
+          gold_reward?: number | null
           id?: string
           members_ids?: string[] | null
           points?: number | null
+          quest_type?: string | null
+          xp_reward?: number | null
         }
         Relationships: [
           {

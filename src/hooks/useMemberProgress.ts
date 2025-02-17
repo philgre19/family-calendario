@@ -1,7 +1,7 @@
 
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { Level, Member } from "@/types/database.types";
+import { Level } from "@/types/database.types";
 import { toast } from "sonner";
 
 const XP_PER_LEVEL = 100; // Base XP needed per level
@@ -9,7 +9,7 @@ const XP_PER_LEVEL = 100; // Base XP needed per level
 export const useMemberProgress = (memberId: string) => {
   const queryClient = useQueryClient();
 
-  const { data: progress, isLoading } = useQuery({
+  const { data: progress, isLoading } = useQuery<Level>({
     queryKey: ["member-progress", memberId],
     queryFn: async () => {
       const { data: level } = await supabase
@@ -17,6 +17,22 @@ export const useMemberProgress = (memberId: string) => {
         .select("*")
         .eq("member_id", memberId)
         .single();
+
+      if (!level) {
+        // Create initial level if it doesn't exist
+        const { data: newLevel } = await supabase
+          .from("levels")
+          .insert({
+            member_id: memberId,
+            current_level: 1,
+            current_xp: 0,
+            gold: 0,
+          })
+          .select()
+          .single();
+
+        return newLevel;
+      }
 
       return level;
     },
