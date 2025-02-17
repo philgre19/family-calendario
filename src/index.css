@@ -26,37 +26,81 @@
     --sophie-color: var(--pastel-purple);
     --sophie-color-hover: 288 47% 78%;
   }
+
+  html, body {
+    @apply h-screen overflow-hidden;
+  }
 }
  
-@layer base {
-  * {
-    @apply border-border;
+@layer components {
+  /* Menu latéral optimisé */
+  .sidebar-link {
+    @apply flex items-center justify-center rounded-lg p-2 text-gray-100 transition-all 
+           backdrop-blur-sm w-[70px] h-[70px] mx-auto relative
+           hover:shadow-md hover:scale-105 duration-200;
   }
-  body {
-    @apply bg-[hsl(var(--background))] text-foreground antialiased font-nunito text-base;
+
+  .sidebar-link.active {
+    @apply bg-white/20 text-white shadow-lg;
+  }
+
+  /* Styles des badges */
+  .badge {
+    @apply absolute -top-1 -right-1 flex items-center justify-center
+           rounded-full shadow-sm scale-in min-w-[24px] h-[24px];
+  }
+
+  /* Drop shadow pour les icônes */
+  .drop-shadow-glow {
+    filter: drop-shadow(0 0 4px rgba(255, 255, 255, 0.5));
+  }
+
+  /* Composants réutilisables */
+  .calendar-card {
+    @apply bg-white/80 backdrop-blur-sm rounded-2xl shadow-sm p-4
+           hover:shadow-lg transition-all duration-300 hover:scale-[1.03]
+           h-full;
+  }
+
+  /* Layout optimisé */
+  .dashboard-container {
+    @apply container mx-auto px-8 py-4 h-full flex flex-col;
+  }
+
+  .dashboard-grid {
+    @apply grid gap-5 flex-1 grid-rows-[auto_1fr_1fr];
+  }
+
+  .widgets-grid {
+    @apply grid grid-cols-2 gap-5;
+  }
+
+  /* Tooltip personnalisé */
+  .custom-tooltip {
+    @apply bg-white/95 backdrop-blur-sm text-gray-800 px-3 py-2 rounded-lg
+           shadow-lg font-medium text-sm min-w-[120px] text-center;
   }
 }
 
-/* Styles du menu latéral */
-.sidebar-link {
-  @apply flex items-center justify-center rounded-lg p-2 text-gray-100 transition-all 
-         backdrop-blur-sm w-12 h-12 relative
-         hover:shadow-md hover:scale-105 duration-200;
+/* Animations */
+@keyframes slide-in-right {
+  from { transform: translateX(20px); opacity: 0; }
+  to { transform: translateX(0); opacity: 1; }
 }
 
-.sidebar-link.active {
-  @apply bg-white text-blue-600 shadow-md;
+.slide-tooltip {
+  animation: slide-in-right 0.2s ease-out;
 }
 
-/* Styles des badges */
-.badge {
-  @apply absolute -top-1 -right-1 flex items-center justify-center
-         rounded-full shadow-sm scale-in;
+/* Widget animations */
+.widget-validate {
+  animation: widget-bounce 0.15s ease-out;
 }
 
-/* Drop shadow pour les icônes */
-.drop-shadow-glow {
-  filter: drop-shadow(0 0 4px rgba(255, 255, 255, 0.5));
+@keyframes widget-bounce {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+  100% { transform: scale(1); }
 }
 
 /* Styles des événements */
@@ -151,22 +195,35 @@
 }
 
 /* Animations globales */
-@keyframes slide-in-right {
-  from { transform: translateX(100%); opacity: 0; }
-  to { transform: translateX(0); opacity: 1; }
-}
-
 @keyframes slide-in-left {
   from { transform: translateX(-100%); opacity: 0; }
   to { transform: translateX(0); opacity: 1; }
 }
 
-.slide-in-right {
-  animation: slide-in-right 0.5s ease-out;
-}
-
 .slide-in-left {
   animation: slide-in-left 0.5s ease-out;
+}
+
+/* Styles du menu latéral */
+.sidebar-link {
+  @apply flex items-center justify-center rounded-lg p-2 text-gray-100 transition-all 
+         backdrop-blur-sm w-12 h-12 relative
+         hover:shadow-md hover:scale-105 duration-200;
+}
+
+.sidebar-link.active {
+  @apply bg-white text-blue-600 shadow-md;
+}
+
+/* Styles des badges */
+.badge {
+  @apply absolute -top-1 -right-1 flex items-center justify-center
+         rounded-full shadow-sm scale-in;
+}
+
+/* Drop shadow pour les icônes */
+.drop-shadow-glow {
+  filter: drop-shadow(0 0 4px rgba(255, 255, 255, 0.5));
 }
 
 /* Composants réutilisables */
