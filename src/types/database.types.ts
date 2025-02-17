@@ -1,4 +1,3 @@
-
 export interface Member {
   id: string;
   name: string;
@@ -14,6 +13,7 @@ export interface Member {
   level?: number;
   xp?: number;
   gold?: number;
+  age?: number;
 }
 
 export interface Event {
