@@ -9,12 +9,13 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
-import { Trash2 } from "lucide-react";
+import { Trophy, Swords, ScrollText } from "lucide-react";
 import { NewTaskDialog } from "./NewTaskDialog";
 import { useTasks } from "@/hooks/useTasks";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
+import { useMemberProgress } from "@/hooks/useMemberProgress";
 
 export const TaskList = () => {
   const { tasks, isLoading, addTask, updateTask, deleteTask } = useTasks();
@@ -27,23 +28,32 @@ export const TaskList = () => {
     },
   });
 
-  if (isLoading) {
-    return (
-      <div className="space-y-4">
-        <Skeleton className="h-10 w-32" />
-        <div className="space-y-2">
-          {[1, 2, 3].map((i) => (
-            <Skeleton key={i} className="h-16 w-full" />
-          ))}
-        </div>
-      </div>
+  const getQuestIcon = (type: string) => {
+    switch (type) {
+      case "daily_quest":
+        return <ScrollText className="h-4 w-4 text-blue-500" />;
+      case "challenge":
+        return <Swords className="h-4 w-4 text-purple-500" />;
+      default:
+        return <Trophy className="h-4 w-4 text-yellow-500" />;
+    }
+  };
+
+  const getTaskColor = (task: any) => {
+    if (task.completed) return "bg-gray-100";
+    const daysSinceCreation = Math.floor(
+      (new Date().getTime() - new Date(task.created_at).getTime()) /
+        (1000 * 3600 * 24)
     );
-  }
+    if (daysSinceCreation <= 1) return "bg-green-50";
+    if (daysSinceCreation <= 3) return "bg-yellow-50";
+    return "bg-red-50";
+  };
 
   return (
     <div className="space-y-6">
       <div className="flex justify-between items-center">
-        <h2 className="text-2xl font-semibold">Tâches</h2>
+        <h2 className="text-2xl font-semibold">Quêtes & Missions</h2>
         <NewTaskDialog onAdd={addTask.mutate} />
       </div>
 
@@ -51,7 +61,9 @@ export const TaskList = () => {
         {tasks.map((task) => (
           <div
             key={task.id}
-            className="flex items-center gap-4 p-4 bg-white rounded-lg shadow-sm"
+            className={`flex items-center gap-4 p-4 rounded-lg shadow-sm transition-all ${getTaskColor(
+              task
+            )}`}
           >
             <Checkbox
               checked={task.completed}
@@ -60,14 +72,19 @@ export const TaskList = () => {
               }
             />
             <div className="flex-1">
-              <p
-                className={`text-sm ${
-                  task.completed ? "line-through text-gray-400" : ""
-                }`}
-              >
-                {task.description}
-              </p>
-              <div className="text-xs text-gray-500">{task.points} points</div>
+              <div className="flex items-center gap-2">
+                {getQuestIcon(task.quest_type)}
+                <p
+                  className={`text-sm ${
+                    task.completed ? "line-through text-gray-400" : ""
+                  }`}
+                >
+                  {task.description}
+                </p>
+              </div>
+              <div className="text-xs text-gray-500 mt-1">
+                +{task.xp_reward} XP • +{task.gold_reward} 🪙
+              </div>
             </div>
             <Select
               value={task.assigned_to || ""}
@@ -106,13 +123,6 @@ export const TaskList = () => {
                 ))}
               </SelectContent>
             </Select>
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={() => deleteTask.mutate(task.id)}
-            >
-              <Trash2 className="h-4 w-4" />
-            </Button>
           </div>
         ))}
       </div>
