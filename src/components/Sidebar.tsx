@@ -137,7 +137,7 @@ export const Sidebar = () => {
 
   return (
     <TooltipProvider>
-      <SidebarContainer className="w-[80px] fixed left-0 top-0 h-screen z-50">
+      <SidebarContainer className="w-[90px] fixed left-0 top-0 h-screen z-50">
         <SidebarContent className="overflow-hidden">
           <SidebarGroup className="bg-[#0f31b3]/90 backdrop-blur-sm px-0 rounded-3xl mx-2 mt-2 h-[calc(100vh-1rem)]
                                   flex flex-col justify-between">
@@ -155,7 +155,7 @@ export const Sidebar = () => {
                               location.pathname === item.path ? "active" : ""
                             }`}
                           >
-                            <item.icon className="h-6 w-6 text-gray-100 transition-all duration-200 
+                            <item.icon className="h-7 w-7 text-gray-100 transition-all duration-200 
                                                 group-hover:scale-110 group-hover:drop-shadow-glow" />
                             <span className="sr-only">{item.name}</span>
                             {item.badge && (
@@ -163,7 +163,7 @@ export const Sidebar = () => {
                                 item.badge.type === 'warning' ? 'bg-red-500' :
                                 item.badge.type === 'info' ? 'bg-blue-500' :
                                 'bg-yellow-500'
-                              } text-white min-w-[20px] h-[20px] text-sm font-semibold
+                              } text-white min-w-[24px] h-[24px] text-sm font-semibold
                                 ${item.badge.type === 'alert' ? 'animate-pulse' : ''}`}>
                                 {item.badge.count || item.badge.icon}
                               </span>
@@ -171,8 +171,8 @@ export const Sidebar = () => {
                           </Link>
                         </SidebarMenuButton>
                       </TooltipTrigger>
-                      <TooltipContent side="right" className="bg-white/90 backdrop-blur-sm">
-                        {item.name}
+                      <TooltipContent side="right" className="bg-white/95 backdrop-blur-sm border-0 shadow-lg">
+                        <span className="text-blue-900 font-medium">{item.name}</span>
                       </TooltipContent>
                     </Tooltip>
                   </SidebarMenuItem>
