@@ -18,7 +18,7 @@ export interface Database {
 export interface Member {
   id: string;
   name: string;
-  created_at?: string;
+  created_at: string;
   avatar_url: string | null;
   color: string;
   avatar_type: 'illustrated' | 'photo';

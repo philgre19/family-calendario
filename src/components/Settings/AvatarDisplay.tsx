@@ -5,6 +5,7 @@ import { cn } from "@/lib/utils";
 import { AvatarPreview } from "./AvatarPreview";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
+import { Member } from "@/types/database.types";
 
 interface AvatarDisplayProps {
   avatarUrl: string | null;
@@ -30,7 +31,7 @@ export function AvatarDisplay({
         .select("*")
         .eq("id", memberId)
         .single();
-      return data;
+      return data as Member | null;
     },
     enabled: !!memberId
   });
@@ -41,10 +42,10 @@ export function AvatarDisplay({
         {avatarType === "illustrated" && member ? (
           <AvatarPreview
             member={member}
-            selectedHair={member.current_hair || undefined}
-            selectedClothes={member.current_clothes || undefined}
-            selectedAccessory={member.current_accessory || undefined}
-            hairColor={member.current_hair_color || undefined}
+            selectedHair={member.current_hair}
+            selectedClothes={member.current_clothes}
+            selectedAccessory={member.current_accessory}
+            hairColor={member.current_hair_color}
             className="w-32 h-32 ring-2 ring-primary/20 transition-all hover:ring-primary/40"
           />
         ) : (

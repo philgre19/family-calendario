@@ -73,9 +73,6 @@ export default function Settings() {
                           </Avatar>
                           <div className="flex-1 text-left">
                             <p className="text-lg font-medium">{member.name}</p>
-                            <p className="text-sm text-muted-foreground">
-                              Niveau {member.level || 1}
-                            </p>
                           </div>
                           <Pencil className="w-5 h-5 text-muted-foreground" />
                         </div>
