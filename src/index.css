@@ -1,3 +1,4 @@
+
 @import url('https://fonts.googleapis.com/css2?family=Nunito:wght@300;400;500;600;700&display=swap');
 
 @tailwind base;
@@ -18,22 +19,6 @@
     --pastel-purple: 288 47% 83%; /* #E1BEE7 */
     --pastel-green: 146 45% 88%; /* #D4EFDF */
 
-    /* Couleurs système */
-    --card: 0 0% 100%;
-    --card-foreground: 222.2 84% 4.9%;
-    --popover: 0 0% 100%;
-    --popover-foreground: 222.2 84% 4.9%;
-    --muted: 210 40% 96.1%;
-    --muted-foreground: 215.4 16.3% 46.9%;
-    --accent: 210 40% 96.1%;
-    --accent-foreground: 222.2 47.4% 11.2%;
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 210 40% 98%;
-    --border: 214.3 31.8% 91.4%;
-    --input: 214.3 31.8% 91.4%;
-    --ring: 222.2 84% 4.9%;
-    --radius: 1rem;
- 
     /* Couleurs par membre de la famille */
     --emma-color: var(--pastel-pink);
     --emma-color-hover: 315 59% 85%;
@@ -70,25 +55,6 @@
          rounded-full shadow-sm scale-in;
 }
 
-/* Animations globales */
-@keyframes slide-in-right {
-  from { transform: translateX(100%); opacity: 0; }
-  to { transform: translateX(0); opacity: 1; }
-}
-
-@keyframes slide-in-left {
-  from { transform: translateX(-100%); opacity: 0; }
-  to { transform: translateX(0); opacity: 1; }
-}
-
-.slide-in-right {
-  animation: slide-in-right 0.5s ease-out;
-}
-
-.slide-in-left {
-  animation: slide-in-left 0.5s ease-out;
-}
-
 /* Drop shadow pour les icônes */
 .drop-shadow-glow {
   filter: drop-shadow(0 0 4px rgba(255, 255, 255, 0.5));
@@ -110,6 +76,37 @@
 
 .event-sophie {
   @apply bg-[hsl(var(--pastel-purple))];
+}
+
+/* Animations globales */
+@keyframes slide-in-right {
+  from { transform: translateX(100%); opacity: 0; }
+  to { transform: translateX(0); opacity: 1; }
+}
+
+@keyframes slide-in-left {
+  from { transform: translateX(-100%); opacity: 0; }
+  to { transform: translateX(0); opacity: 1; }
+}
+
+.slide-in-right {
+  animation: slide-in-right 0.5s ease-out;
+}
+
+.slide-in-left {
+  animation: slide-in-left 0.5s ease-out;
+}
+
+/* Composants réutilisables */
+.calendar-card {
+  @apply bg-white/80 backdrop-blur-sm rounded-2xl shadow-sm p-6
+         hover:shadow-md transition-all duration-300;
+}
+
+.floating-action-button {
+  @apply fixed bottom-6 right-6 w-14 h-14 rounded-full bg-[hsl(var(--pastel-blue))]
+         flex items-center justify-center text-gray-800 shadow-lg
+         hover:shadow-xl hover:scale-105 transition-all duration-300;
 }
 
 /* Animations */
@@ -138,16 +135,4 @@
 @keyframes scale-in {
   from { transform: scale(0.95); opacity: 0; }
   to { transform: scale(1); opacity: 1; }
-}
-
-/* Composants réutilisables */
-.calendar-card {
-  @apply bg-white/80 backdrop-blur-sm rounded-2xl shadow-sm p-6
-         hover:shadow-md transition-all duration-300;
-}
-
-.floating-action-button {
-  @apply fixed bottom-6 right-6 w-14 h-14 rounded-full bg-[hsl(var(--pastel-blue))]
-         flex items-center justify-center text-gray-800 shadow-lg
-         hover:shadow-xl hover:scale-105 transition-all duration-300;
 }
