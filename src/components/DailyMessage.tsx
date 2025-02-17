@@ -19,7 +19,7 @@ export const DailyMessage = () => {
   };
 
   return (
-    <div className="bg-white/80 backdrop-blur-sm rounded-xl p-3 shadow-sm mb-5 slide-in-top">
+    <div className="bg-white/80 backdrop-blur-sm rounded-xl p-2.5 shadow-sm slide-in-top">
       <div className="flex items-center justify-between">
         {isEditing ? (
           <input
@@ -33,7 +33,7 @@ export const DailyMessage = () => {
         ) : (
           <p className="text-gray-700 font-medium">{message}</p>
         )}
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-1.5 ml-4">
           <button
             onClick={() => setIsEditing(true)}
             className="p-1.5 rounded-lg hover:bg-gray-100 transition-colors"

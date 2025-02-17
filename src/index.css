@@ -44,35 +44,20 @@
     @apply bg-white/20 text-white shadow-lg;
   }
 
-  /* Styles des badges */
-  .badge {
-    @apply absolute -top-1 -right-1 flex items-center justify-center
-           rounded-full shadow-sm scale-in min-w-[24px] h-[24px];
-  }
-
-  /* Drop shadow pour les icônes */
-  .drop-shadow-glow {
-    filter: drop-shadow(0 0 4px rgba(255, 255, 255, 0.5));
-  }
-
   /* Composants réutilisables */
   .calendar-card {
-    @apply bg-white/80 backdrop-blur-sm rounded-2xl shadow-sm p-4
-           hover:shadow-lg transition-all duration-300 hover:scale-[1.03]
-           h-full;
+    @apply bg-white/80 backdrop-blur-sm rounded-xl p-4 shadow-sm
+           hover:shadow-lg transition-all duration-300 hover:scale-[1.02]
+           h-full flex flex-col;
   }
 
   /* Layout optimisé */
   .dashboard-container {
-    @apply container mx-auto px-8 py-4 h-full flex flex-col;
+    @apply h-full flex flex-col;
   }
 
   .dashboard-grid {
-    @apply grid gap-5 flex-1 grid-rows-[auto_1fr_1fr];
-  }
-
-  .widgets-grid {
-    @apply grid grid-cols-2 gap-5;
+    @apply grid gap-4 grid-cols-4;
   }
 
   /* Tooltip personnalisé */
