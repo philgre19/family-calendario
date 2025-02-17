@@ -1,3 +1,4 @@
+
 export interface Database {
   public: {
     Tables: {
@@ -17,22 +18,17 @@ export interface Database {
 export interface Member {
   id: string;
   name: string;
+  created_at?: string;
   avatar_url: string | null;
   color: string;
   avatar_type: 'illustrated' | 'photo';
-  participate_in_quests: boolean;
-  quest_language_style: 'rpg' | 'neutral';
+  participate_in_quests: boolean | null;
+  quest_language_style: 'rpg' | 'neutral' | null;
   current_hair: string | null;
   current_clothes: string | null;
   current_accessory: string | null;
   current_background: string | null;
   current_hair_color: string | null;
-  avatar_items: Record<string, any>;
-  level?: number;
-  xp?: number;
-  gold?: number;
-  age?: number;
-  created_at?: string;
 }
 
 export interface AvatarItem {
@@ -41,7 +37,10 @@ export interface AvatarItem {
   type: 'hair' | 'clothes' | 'accessory';
   image_url: string;
   color?: string | null;
-  created_at: string;
+  display_name?: string | null;
+  is_premium?: boolean | null;
+  rarity?: string | null;
+  created_at?: string;
 }
 
 export interface MemberAvatarItem {
