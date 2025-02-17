@@ -1,3 +1,19 @@
+export interface Database {
+  public: {
+    Tables: {
+      members: {
+        Row: Member;
+      };
+      avatar_items: {
+        Row: AvatarItem;
+      };
+      member_avatar_items: {
+        Row: MemberAvatarItem;
+      };
+    };
+  };
+}
+
 export interface Member {
   id: string;
   name: string;
@@ -16,6 +32,7 @@ export interface Member {
   xp?: number;
   gold?: number;
   age?: number;
+  created_at?: string;
 }
 
 export interface AvatarItem {

@@ -1,5 +1,5 @@
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useQueryClient, useQuery } from "@tanstack/react-query";
 import { Member, AvatarItem } from "@/types/database.types";
 import { supabase } from "@/integrations/supabase/client";
@@ -23,7 +23,6 @@ interface MemberAvatarEditorProps {
 const hairColors = [
   { name: "Noir", value: "#000000" },
   { name: "Brun", value: "#4A2F1C" },
-  { name: "Châtain", value: "#8B4513" },
   { name: "Blond", value: "#FFD700" },
   { name: "Roux", value: "#D35400" },
 ];
@@ -42,9 +41,10 @@ export function MemberAvatarEditor({ member, onClose }: MemberAvatarEditorProps)
   const [currentClothes, setCurrentClothes] = useState(member.current_clothes);
   const [currentAccessory, setCurrentAccessory] = useState(member.current_accessory);
   const [uploadProgress, setUploadProgress] = useState(0);
-  
+
+  // Charger les éléments d'avatar depuis la base de données
   const { data: avatarItems = [] } = useQuery({
-    queryKey: ['avatar_items'],
+    queryKey: ['avatarItems'],
     queryFn: async () => {
       const { data, error } = await supabase
         .from('avatar_items')
@@ -66,7 +66,6 @@ export function MemberAvatarEditor({ member, onClose }: MemberAvatarEditorProps)
       const file = event.target.files?.[0];
       if (!file) return;
 
-      // Vérifier la taille du fichier (max 5MB)
       if (file.size > 5 * 1024 * 1024) {
         throw new Error("Le fichier est trop volumineux (max 5MB)");
       }
@@ -74,12 +73,11 @@ export function MemberAvatarEditor({ member, onClose }: MemberAvatarEditorProps)
       const fileExt = file.name.split('.').pop();
       const filePath = `${member.id}_${Date.now()}.${fileExt}`;
 
-      // Simuler la progression de l'upload
       const progressInterval = setInterval(() => {
         setUploadProgress((prev) => Math.min(prev + 10, 90));
       }, 100);
 
-      const { error: uploadError } = await supabase.storage
+      const { error: uploadError, data } = await supabase.storage
         .from('avatars')
         .upload(filePath, file, {
           cacheControl: '3600',
@@ -97,8 +95,20 @@ export function MemberAvatarEditor({ member, onClose }: MemberAvatarEditorProps)
 
       setAvatarUrl(publicUrl);
 
-      // Reset progress after a short delay
+      // Mettre à jour immédiatement l'URL de l'avatar dans la base de données
+      const { error: updateError } = await supabase
+        .from('members')
+        .update({ avatar_url: publicUrl })
+        .eq('id', member.id);
+
+      if (updateError) throw updateError;
+
       setTimeout(() => setUploadProgress(0), 1000);
+
+      toast({
+        title: "Succès !",
+        description: "La photo a été téléchargée avec succès ✨",
+      });
     } catch (error: any) {
       toast({
         title: "Erreur",
@@ -107,6 +117,14 @@ export function MemberAvatarEditor({ member, onClose }: MemberAvatarEditorProps)
       });
     } finally {
       setIsLoading(false);
+    }
+  };
+
+  const handleAvatarTypeChange = async (type: 'illustrated' | 'photo') => {
+    setAvatarType(type);
+    if (type === 'illustrated') {
+      setAvatarUrl(null);
+      // Réinitialiser les choix d'avatar illustré si nécessaire
     }
   };
 
@@ -133,19 +151,6 @@ export function MemberAvatarEditor({ member, onClose }: MemberAvatarEditorProps)
 
       if (error) throw error;
 
-      // Mettre à jour les éléments d'avatar du membre
-      if (avatarType === 'illustrated' && (currentHair || currentClothes || currentAccessory)) {
-        const { error: itemsError } = await supabase
-          .from('member_avatar_items')
-          .upsert([
-            { member_id: member.id, item_id: currentHair, color: currentHairColor },
-            { member_id: member.id, item_id: currentClothes },
-            { member_id: member.id, item_id: currentAccessory },
-          ].filter(item => item.item_id));
-
-        if (itemsError) throw itemsError;
-      }
-
       await queryClient.invalidateQueries({ queryKey: ['members'] });
       toast({
         title: "Succès !",
@@ -163,27 +168,23 @@ export function MemberAvatarEditor({ member, onClose }: MemberAvatarEditorProps)
     }
   };
 
-  const filterItems = (type: AvatarItem['type']) => {
-    return avatarItems.filter(item => item.type === type);
-  };
-
   return (
     <div className="mt-6">
       <div className="flex justify-center mb-8">
         <div className="relative">
-          <Avatar className="w-32 h-32">
+          <Avatar className="w-32 h-32 ring-2 ring-primary/20 transition-all hover:ring-primary/40">
             {avatarUrl ? (
               <AvatarImage 
                 src={avatarUrl} 
                 alt={member.name} 
                 className={cn(
-                  "object-cover",
+                  "object-cover transition-all duration-200",
                   avatarType === "photo" && "rounded-full"
                 )}
               />
             ) : (
-              <AvatarFallback>
-                <Camera className="w-12 h-12 text-muted-foreground" />
+              <AvatarFallback className="bg-primary/5">
+                <Camera className="w-12 h-12 text-primary/40" />
               </AvatarFallback>
             )}
           </Avatar>
@@ -199,19 +200,30 @@ export function MemberAvatarEditor({ member, onClose }: MemberAvatarEditorProps)
 
       <Tabs defaultValue="avatar" className="space-y-6">
         <TabsList className="grid grid-cols-3 w-full">
-          <TabsTrigger value="avatar">Avatar</TabsTrigger>
-          <TabsTrigger value="customization" disabled={avatarType !== 'illustrated'}>
+          <TabsTrigger value="avatar" className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
+            Avatar
+          </TabsTrigger>
+          <TabsTrigger 
+            value="customization" 
+            disabled={avatarType !== 'illustrated'}
+            className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground"
+          >
             Personnalisation
           </TabsTrigger>
-          <TabsTrigger value="preferences">Préférences</TabsTrigger>
+          <TabsTrigger value="preferences" className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
+            Préférences
+          </TabsTrigger>
         </TabsList>
 
         <TabsContent value="avatar" className="space-y-6">
           <div className="grid grid-cols-2 gap-4">
             <Button
               variant={avatarType === "illustrated" ? "default" : "outline"}
-              className="h-auto p-4 space-y-2"
-              onClick={() => setAvatarType("illustrated")}
+              className={cn(
+                "h-auto p-4 space-y-2 transition-all",
+                avatarType === "illustrated" ? "bg-primary text-primary-foreground" : "hover:bg-primary/5"
+              )}
+              onClick={() => handleAvatarTypeChange("illustrated")}
             >
               <div className="w-full aspect-square rounded-full bg-primary/10 flex items-center justify-center">
                 <Camera className="w-8 h-8 text-primary" />
@@ -221,8 +233,11 @@ export function MemberAvatarEditor({ member, onClose }: MemberAvatarEditorProps)
 
             <Button
               variant={avatarType === "photo" ? "default" : "outline"}
-              className="h-auto p-4 space-y-2"
-              onClick={() => setAvatarType("photo")}
+              className={cn(
+                "h-auto p-4 space-y-2 transition-all",
+                avatarType === "photo" ? "bg-primary text-primary-foreground" : "hover:bg-primary/5"
+              )}
+              onClick={() => handleAvatarTypeChange("photo")}
             >
               <div className="w-full aspect-square rounded-full bg-primary/10 flex items-center justify-center">
                 <Upload className="w-8 h-8 text-primary" />
@@ -242,7 +257,16 @@ export function MemberAvatarEditor({ member, onClose }: MemberAvatarEditorProps)
                 disabled={isLoading}
               />
               <label htmlFor="avatar-upload">
-                <Button variant="outline" className="cursor-pointer" asChild disabled={isLoading}>
+                <Button 
+                  variant="outline" 
+                  className={cn(
+                    "cursor-pointer transition-all",
+                    "hover:bg-primary/5 hover:border-primary/30",
+                    "focus:ring-2 focus:ring-primary/20"
+                  )} 
+                  asChild 
+                  disabled={isLoading}
+                >
                   <span>
                     {isLoading ? (
                       <Loader className="w-4 h-4 mr-2 animate-spin" />
@@ -260,32 +284,38 @@ export function MemberAvatarEditor({ member, onClose }: MemberAvatarEditorProps)
         <TabsContent value="customization" className="space-y-6">
           <div className="space-y-4">
             <div className="space-y-2">
-              <Label>Coiffure</Label>
-              <Select value={currentHair || ''} onValueChange={setCurrentHair}>
-                <SelectTrigger>
+              <Label className="text-sm font-medium">Coiffure</Label>
+              <Select 
+                value={currentHair || ''} 
+                onValueChange={setCurrentHair}
+              >
+                <SelectTrigger className="w-full hover:border-primary/30 focus:ring-2 focus:ring-primary/20">
                   <SelectValue placeholder="Choisir une coiffure" />
                 </SelectTrigger>
                 <SelectContent>
-                  {filterItems('hair').map((item) => (
-                    <SelectItem key={item.id} value={item.id}>
-                      {item.name}
-                    </SelectItem>
-                  ))}
+                  {avatarItems
+                    .filter(item => item.type === 'hair')
+                    .map((item) => (
+                      <SelectItem key={item.id} value={item.id}>
+                        {item.name}
+                      </SelectItem>
+                    ))}
                 </SelectContent>
               </Select>
             </div>
 
             {currentHair && (
               <div className="space-y-2">
-                <Label>Couleur des cheveux</Label>
-                <div className="grid grid-cols-5 gap-2">
+                <Label className="text-sm font-medium">Couleur des cheveux</Label>
+                <div className="grid grid-cols-4 gap-2">
                   {hairColors.map((color) => (
                     <Button
                       key={color.value}
                       type="button"
                       variant="outline"
                       className={cn(
-                        "w-full h-8 rounded-full p-0",
+                        "w-full h-8 rounded-full p-0 transition-all",
+                        "hover:ring-2 hover:ring-primary/30",
                         currentHairColor === color.value && "ring-2 ring-primary"
                       )}
                       style={{ backgroundColor: color.value }}
@@ -298,33 +328,43 @@ export function MemberAvatarEditor({ member, onClose }: MemberAvatarEditorProps)
             )}
 
             <div className="space-y-2">
-              <Label>Vêtements</Label>
-              <Select value={currentClothes || ''} onValueChange={setCurrentClothes}>
-                <SelectTrigger>
+              <Label className="text-sm font-medium">Vêtements</Label>
+              <Select 
+                value={currentClothes || ''} 
+                onValueChange={setCurrentClothes}
+              >
+                <SelectTrigger className="w-full hover:border-primary/30 focus:ring-2 focus:ring-primary/20">
                   <SelectValue placeholder="Choisir des vêtements" />
                 </SelectTrigger>
                 <SelectContent>
-                  {filterItems('clothes').map((item) => (
-                    <SelectItem key={item.id} value={item.id}>
-                      {item.name}
-                    </SelectItem>
-                  ))}
+                  {avatarItems
+                    .filter(item => item.type === 'clothes')
+                    .map((item) => (
+                      <SelectItem key={item.id} value={item.id}>
+                        {item.name}
+                      </SelectItem>
+                    ))}
                 </SelectContent>
               </Select>
             </div>
 
             <div className="space-y-2">
-              <Label>Accessoires</Label>
-              <Select value={currentAccessory || ''} onValueChange={setCurrentAccessory}>
-                <SelectTrigger>
+              <Label className="text-sm font-medium">Accessoires</Label>
+              <Select 
+                value={currentAccessory || ''} 
+                onValueChange={setCurrentAccessory}
+              >
+                <SelectTrigger className="w-full hover:border-primary/30 focus:ring-2 focus:ring-primary/20">
                   <SelectValue placeholder="Choisir un accessoire" />
                 </SelectTrigger>
                 <SelectContent>
-                  {filterItems('accessory').map((item) => (
-                    <SelectItem key={item.id} value={item.id}>
-                      {item.name}
-                    </SelectItem>
-                  ))}
+                  {avatarItems
+                    .filter(item => item.type === 'accessory')
+                    .map((item) => (
+                      <SelectItem key={item.id} value={item.id}>
+                        {item.name}
+                      </SelectItem>
+                    ))}
                 </SelectContent>
               </Select>
             </div>
@@ -332,73 +372,4 @@ export function MemberAvatarEditor({ member, onClose }: MemberAvatarEditorProps)
         </TabsContent>
 
         <TabsContent value="preferences" className="space-y-6">
-          <div className="space-y-6">
-            <div className="space-y-2">
-              <Label htmlFor="age">Âge</Label>
-              <Input
-                id="age"
-                type="number"
-                value={age}
-                onChange={(e) => setAge(e.target.value)}
-                min="0"
-                max="99"
-              />
-            </div>
-
-            <div className="space-y-4">
-              <div className="flex items-center justify-between">
-                <Label htmlFor="quests-participation">Participer aux quêtes</Label>
-                <Switch
-                  id="quests-participation"
-                  checked={participateInQuests}
-                  onCheckedChange={setParticipateInQuests}
-                />
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="quest-style">Style de langage</Label>
-                <Select value={questStyle} onValueChange={(value) => setQuestStyle(value as QuestStyle)}>
-                  <SelectTrigger id="quest-style">
-                    <SelectValue placeholder="Choisir un style" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="rpg">Style RPG (Quêtes, Missions, Défis)</SelectItem>
-                    <SelectItem value="neutral">Style neutre (Tâches, Routines, Objectifs)</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-            </div>
-
-            <div className="space-y-4 pt-4">
-              <div className="space-y-2">
-                <div className="flex items-center justify-between text-sm">
-                  <span>Niveau {member.level || 1}</span>
-                  <span>{member.gold || 0} 🪙</span>
-                </div>
-                <Progress value={((member.xp || 0) / 100) * 100} className="h-2" />
-                <p className="text-xs text-muted-foreground text-center">
-                  {member.xp || 0} / 100 XP
-                </p>
-              </div>
-            </div>
-          </div>
-        </TabsContent>
-      </Tabs>
-
-      <div className="sticky bottom-0 bg-background pt-4 pb-6">
-        <Button 
-          className="w-full" 
-          onClick={handleSave}
-          disabled={isLoading}
-        >
-          {isLoading ? (
-            <Loader className="w-4 h-4 mr-2 animate-spin" />
-          ) : (
-            <Save className="w-4 h-4 mr-2" />
-          )}
-          Enregistrer les modifications
-        </Button>
-      </div>
-    </div>
-  );
-}
+          <div className="space
