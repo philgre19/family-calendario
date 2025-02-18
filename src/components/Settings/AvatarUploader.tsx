@@ -5,7 +5,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/components/ui/use-toast";
 import { Upload, Loader } from "lucide-react";
-import { cn } from "@/lib/utils";
+import { clsx } from "clsx";
 
 interface AvatarUploaderProps {
   member: Member;
@@ -105,7 +105,7 @@ export function AvatarUploader({ member, isLoading, onUploadSuccess, onUploadErr
       <label htmlFor="avatar-upload">
         <Button 
           variant="outline" 
-          className={cn(
+          className={clsx(
             "cursor-pointer transition-all",
             "hover:bg-primary/5 hover:border-primary/30",
             "focus:ring-2 focus:ring-primary/20"

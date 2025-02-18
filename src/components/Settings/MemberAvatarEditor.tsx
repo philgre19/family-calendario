@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import { Member } from "@/types/database.types";
@@ -47,8 +46,7 @@ export function MemberAvatarEditor({ member, onClose }: MemberAvatarEditorProps)
   const handleIllustratedAvatarUpdate = (updates: Partial<Member>) => {
     setIllustratedAvatarUpdates(prev => ({ ...prev, ...updates }));
     
-    // Calculer la progression de personnalisation
-    const totalElements = 3; // cheveux, vêtements, accessoires
+    const totalElements = 3;
     const selectedElements = Object.values({ ...illustratedAvatarUpdates, ...updates })
       .filter(Boolean)
       .length;
@@ -60,15 +58,8 @@ export function MemberAvatarEditor({ member, onClose }: MemberAvatarEditorProps)
     setAvatarType('photo');
     setCustomizationProgress(100);
     
-    // Mettre à jour les données immédiatement
-    await updateMemberAvatar({
-      avatar_url: url,
-      avatar_type: 'photo',
-      current_hair: null,
-      current_clothes: null,
-      current_accessory: null,
-      current_hair_color: null
-    });
+    setShowConfetti(true);
+    setTimeout(() => setShowConfetti(false), 3000);
   };
 
   const updateMemberAvatar = async (updates: Partial<Member>) => {
@@ -79,7 +70,6 @@ export function MemberAvatarEditor({ member, onClose }: MemberAvatarEditorProps)
 
     if (error) throw error;
 
-    // Rafraîchir les données
     await queryClient.invalidateQueries({ queryKey: ['members'] });
   };
 
@@ -102,7 +92,6 @@ export function MemberAvatarEditor({ member, onClose }: MemberAvatarEditorProps)
 
       await updateMemberAvatar(updates);
 
-      // Effets visuels de succès
       setShowConfetti(true);
       setTimeout(() => setShowConfetti(false), 3000);
 
@@ -125,47 +114,50 @@ export function MemberAvatarEditor({ member, onClose }: MemberAvatarEditorProps)
   };
 
   return (
-    <div className="mt-6 font-nunito">
+    <div className="mt-6 font-nunito relative">
       {showConfetti && (
-        <div className="fixed inset-0 pointer-events-none z-50">
+        <div className="fixed inset-0 pointer-events-none z-50 bg-black/5">
           <div className="absolute inset-0 flex items-center justify-center">
             <Sparkles className="w-16 h-16 text-yellow-400 animate-bounce" />
           </div>
         </div>
       )}
 
-      <div className="text-center mb-6 space-y-2">
+      <div className="text-center mb-8 space-y-3">
         <h2 className="text-2xl font-bold bg-gradient-to-r from-blue-500 to-purple-500 text-transparent bg-clip-text">
           Crée ton héros du quotidien !
         </h2>
-        <p className="text-sm text-muted-foreground">
+        <p className="text-sm text-gray-600">
           Personnalise ton avatar et deviens un super aventurier !
         </p>
       </div>
 
-      <div className="relative mb-8">
-        <div className="absolute inset-0 bg-gradient-to-b from-blue-50 to-purple-50 opacity-50 rounded-2xl" />
-        <div className="relative p-6">
+      <div className="relative mb-8 rounded-2xl overflow-hidden">
+        <div className="absolute inset-0 bg-gradient-to-b from-blue-50 to-purple-50 opacity-50" />
+        <div className="relative p-8">
           <AvatarDisplay 
             member={member}
             avatarUrl={avatarUrl}
             avatarType={avatarType}
             selectedItems={illustratedAvatarUpdates}
-            className="w-40 h-40 mx-auto transform hover:scale-105 transition-all"
+            className="w-40 h-40 mx-auto transform hover:scale-105 transition-all duration-300"
           />
           
           {customizationProgress > 0 && (
-            <div className="mt-4">
-              <p className="text-sm text-center mb-2 text-muted-foreground">
+            <div className="mt-6 max-w-md mx-auto">
+              <p className="text-sm text-center mb-2 text-gray-600 font-medium">
                 Personnalisation : {Math.round(customizationProgress)}%
               </p>
-              <Progress value={customizationProgress} className="h-2 bg-purple-100" />
+              <Progress 
+                value={customizationProgress} 
+                className="h-2 bg-purple-100"
+              />
             </div>
           )}
         </div>
       </div>
 
-      <Tabs defaultValue="avatar" className="space-y-6">
+      <Tabs defaultValue="avatar" className="space-y-8">
         <TabsList className="grid grid-cols-2 w-full p-1 bg-purple-50 rounded-xl">
           <TabsTrigger 
             value="avatar" 
@@ -182,65 +174,85 @@ export function MemberAvatarEditor({ member, onClose }: MemberAvatarEditorProps)
           </TabsTrigger>
         </TabsList>
 
-        <TabsContent value="avatar" className="space-y-6">
-          <div className="p-6 bg-white rounded-xl shadow-soft space-y-6">
-            <div className="grid gap-4 md:grid-cols-2">
+        <TabsContent 
+          value="avatar" 
+          className="space-y-6 min-h-[400px] transition-all duration-300"
+        >
+          <div className="p-6 bg-white rounded-2xl shadow-soft space-y-8">
+            <div className="grid gap-6 md:grid-cols-2">
               <Button
                 variant={avatarType === "photo" ? "default" : "outline"}
                 className={clsx(
-                  "h-auto p-6 space-y-3 rounded-xl transition-all",
-                  "hover:scale-105 hover:shadow-lg",
-                  avatarType === "photo" && "bg-gradient-to-r from-blue-500 to-purple-500"
+                  "h-auto aspect-square p-6 rounded-2xl transition-all duration-300",
+                  "hover:scale-[1.02] hover:shadow-lg",
+                  "active:scale-[0.98]",
+                  avatarType === "photo" && "bg-gradient-to-br from-blue-500 to-purple-500"
                 )}
                 onClick={() => handleAvatarTypeChange("photo")}
               >
-                <div className="w-16 h-16 rounded-full bg-white/90 flex items-center justify-center mx-auto">
-                  <Camera className="w-8 h-8 text-blue-500" />
+                <div className="space-y-4">
+                  <div className="w-20 h-20 rounded-full bg-white/90 flex items-center justify-center mx-auto">
+                    <Camera className="w-10 h-10 text-blue-500" />
+                  </div>
+                  <div className="space-y-2">
+                    <p className="text-lg font-medium">Photo de moi</p>
+                    <p className="text-sm opacity-90">Utilise ta propre photo</p>
+                  </div>
                 </div>
-                <p className="text-lg font-medium">Télécharger une photo de moi</p>
               </Button>
 
               <Button
                 variant={avatarType === "illustrated" ? "default" : "outline"}
                 className={clsx(
-                  "h-auto p-6 space-y-3 rounded-xl transition-all",
-                  "hover:scale-105 hover:shadow-lg",
-                  avatarType === "illustrated" && "bg-gradient-to-r from-blue-500 to-purple-500"
+                  "h-auto aspect-square p-6 rounded-2xl transition-all duration-300",
+                  "hover:scale-[1.02] hover:shadow-lg",
+                  "active:scale-[0.98]",
+                  avatarType === "illustrated" && "bg-gradient-to-br from-blue-500 to-purple-500"
                 )}
                 onClick={() => handleAvatarTypeChange("illustrated")}
               >
-                <div className="w-16 h-16 rounded-full bg-white/90 flex items-center justify-center mx-auto">
-                  <Palette className="w-8 h-8 text-purple-500" />
+                <div className="space-y-4">
+                  <div className="w-20 h-20 rounded-full bg-white/90 flex items-center justify-center mx-auto">
+                    <Palette className="w-10 h-10 text-purple-500" />
+                  </div>
+                  <div className="space-y-2">
+                    <p className="text-lg font-medium">Avatar créatif</p>
+                    <p className="text-sm opacity-90">Crée ton personnage</p>
+                  </div>
                 </div>
-                <p className="text-lg font-medium">Créer mon personnage</p>
               </Button>
             </div>
 
-            {avatarType === "photo" ? (
-              <AvatarUploader
-                member={member}
-                isLoading={isLoading}
-                onUploadSuccess={handlePhotoUploadSuccess}
-                onUploadError={(error) => {
-                  toast({
-                    title: "Oups !",
-                    description: error.message,
-                    variant: "destructive"
-                  });
-                }}
-              />
-            ) : (
-              <IllustratedAvatarEditor 
-                member={member}
-                onUpdate={handleIllustratedAvatarUpdate}
-                currentItems={illustratedAvatarUpdates}
-              />
-            )}
+            <div className="pt-4 border-t">
+              {avatarType === "photo" ? (
+                <AvatarUploader
+                  member={member}
+                  isLoading={isLoading}
+                  onUploadSuccess={handlePhotoUploadSuccess}
+                  onUploadError={(error) => {
+                    toast({
+                      title: "Oups !",
+                      description: error.message,
+                      variant: "destructive"
+                    });
+                  }}
+                />
+              ) : (
+                <IllustratedAvatarEditor 
+                  member={member}
+                  onUpdate={handleIllustratedAvatarUpdate}
+                  currentItems={illustratedAvatarUpdates}
+                />
+              )}
+            </div>
           </div>
         </TabsContent>
 
-        <TabsContent value="preferences" className="space-y-6">
-          <div className="p-6 bg-white rounded-xl shadow-soft">
+        <TabsContent 
+          value="preferences" 
+          className="space-y-6 min-h-[400px] transition-all duration-300"
+        >
+          <div className="p-6 bg-white rounded-2xl shadow-soft">
             <PreferencesForm
               participateInQuests={participateInQuests}
               questStyle={questStyle}
@@ -251,9 +263,16 @@ export function MemberAvatarEditor({ member, onClose }: MemberAvatarEditorProps)
         </TabsContent>
       </Tabs>
 
-      <div className="sticky bottom-0 bg-background pt-4 pb-6">
+      <div className="sticky bottom-0 bg-gradient-to-t from-white to-transparent pt-8 pb-6 mt-8">
         <Button 
-          className="w-full text-lg py-6 bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600 transition-all" 
+          className={clsx(
+            "w-full text-lg py-6 transition-all duration-300",
+            "bg-gradient-to-r from-blue-500 to-purple-500",
+            "hover:from-blue-600 hover:to-purple-600",
+            "hover:scale-[1.02] hover:shadow-lg",
+            "active:scale-[0.98]",
+            "disabled:opacity-50 disabled:cursor-not-allowed"
+          )}
           onClick={handleSave}
           disabled={isLoading}
         >
