@@ -1,16 +1,14 @@
 
-import { useState, useEffect } from "react";
-import { useQuery } from "@tanstack/react-query";
+import { useState } from "react";
 import { Member } from "@/types/database.types";
-import { supabase } from "@/integrations/supabase/client";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { AvatarItemSelector } from "./AvatarItemSelector";
-import { AvatarPreview } from "./AvatarPreview";
 
 interface IllustratedAvatarEditorProps {
   member: Member;
   onUpdate: (updates: Partial<Member>) => void;
+  currentItems: Partial<Member>;
 }
 
 const hairColors = [
@@ -21,23 +19,27 @@ const hairColors = [
   { name: "Bleu", value: "240" },
 ];
 
-export function IllustratedAvatarEditor({ member, onUpdate }: IllustratedAvatarEditorProps) {
-  const [selectedHair, setSelectedHair] = useState<string | null>(member.current_hair || null);
-  const [selectedClothes, setSelectedClothes] = useState<string | null>(member.current_clothes || null);
-  const [selectedAccessory, setSelectedAccessory] = useState<string | null>(member.current_accessory || null);
-  const [hairColor, setHairColor] = useState<string>(member.current_hair_color || "0");
+export function IllustratedAvatarEditor({ 
+  member, 
+  onUpdate,
+  currentItems 
+}: IllustratedAvatarEditorProps) {
+  const [selectedHair, setSelectedHair] = useState<string | null>(currentItems.current_hair || null);
+  const [selectedClothes, setSelectedClothes] = useState<string | null>(currentItems.current_clothes || null);
+  const [selectedAccessory, setSelectedAccessory] = useState<string | null>(currentItems.current_accessory || null);
+  const [hairColor, setHairColor] = useState<string>(currentItems.current_hair_color || "0");
 
-  const handleHairSelect = async (itemId: string) => {
+  const handleHairSelect = (itemId: string) => {
     setSelectedHair(itemId);
     onUpdate({ current_hair: itemId });
   };
 
-  const handleClothesSelect = async (itemId: string) => {
+  const handleClothesSelect = (itemId: string) => {
     setSelectedClothes(itemId);
     onUpdate({ current_clothes: itemId });
   };
 
-  const handleAccessorySelect = async (itemId: string) => {
+  const handleAccessorySelect = (itemId: string) => {
     setSelectedAccessory(itemId);
     onUpdate({ current_accessory: itemId });
   };
@@ -49,20 +51,9 @@ export function IllustratedAvatarEditor({ member, onUpdate }: IllustratedAvatarE
 
   return (
     <div className="space-y-6">
-      <div className="flex justify-center">
-        <AvatarPreview 
-          member={member}
-          selectedHair={selectedHair}
-          selectedClothes={selectedClothes}
-          selectedAccessory={selectedAccessory}
-          hairColor={hairColor}
-          className="w-32 h-32"
-        />
-      </div>
-
       <div className="space-y-4">
         <div className="space-y-2">
-          <Label>Coiffure</Label>
+          <Label className="text-lg font-medium text-purple-700">Coiffure</Label>
           <AvatarItemSelector 
             type="hair"
             selectedItemId={selectedHair}
@@ -70,9 +61,9 @@ export function IllustratedAvatarEditor({ member, onUpdate }: IllustratedAvatarE
           />
           
           <div className="mt-2">
-            <Label>Couleur des cheveux</Label>
+            <Label className="text-lg font-medium text-purple-700">Couleur des cheveux</Label>
             <Select value={hairColor} onValueChange={handleHairColorChange}>
-              <SelectTrigger>
+              <SelectTrigger className="bg-white/50">
                 <SelectValue placeholder="Choisir une couleur" />
               </SelectTrigger>
               <SelectContent>
@@ -87,7 +78,7 @@ export function IllustratedAvatarEditor({ member, onUpdate }: IllustratedAvatarE
         </div>
 
         <div className="space-y-2">
-          <Label>Vêtements</Label>
+          <Label className="text-lg font-medium text-purple-700">Vêtements</Label>
           <AvatarItemSelector 
             type="clothes"
             selectedItemId={selectedClothes}
@@ -96,7 +87,7 @@ export function IllustratedAvatarEditor({ member, onUpdate }: IllustratedAvatarE
         </div>
 
         <div className="space-y-2">
-          <Label>Accessoires</Label>
+          <Label className="text-lg font-medium text-purple-700">Accessoires</Label>
           <AvatarItemSelector 
             type="accessory"
             selectedItemId={selectedAccessory}
