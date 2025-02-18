@@ -31,16 +31,19 @@ export function AvatarItemSelector({ type, selectedItemId, onSelectItem }: Avata
   }
 
   return (
-    <ScrollArea className="h-[120px] rounded-md border p-4">
-      <div className="flex gap-2 pb-2">
+    <ScrollArea className="h-[120px] rounded-xl border bg-white/50 p-4 shadow-inner">
+      <div className="flex gap-3 pb-2">
         {items?.map((item) => (
           <Button
             key={item.id}
             variant="outline"
             size="sm"
             className={cn(
-              "h-[80px] w-[80px] p-2 transition-all",
-              selectedItemId === item.id && "ring-2 ring-primary"
+              "h-[80px] w-[80px] p-2 transition-all rounded-xl",
+              "hover:scale-105 hover:shadow-md",
+              "active:scale-95",
+              selectedItemId === item.id && 
+              "ring-4 ring-primary/30 bg-primary/5 scale-105"
             )}
             onClick={() => onSelectItem(item.id)}
           >
