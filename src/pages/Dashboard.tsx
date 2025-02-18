@@ -1,63 +1,53 @@
 
 import { MainLayout } from "@/components/MainLayout";
-import { DailyMessage } from "@/components/DailyMessage";
-import { MorningRoutine } from "@/components/widgets/MorningRoutine";
-import { DailyGoal } from "@/components/widgets/DailyGoal";
-import { FamilyPoints } from "@/components/widgets/FamilyPoints";
-import { ScreenTime } from "@/components/widgets/ScreenTime";
+import { DailyMessage } from "@/components/dashboard/DailyMessage";
+import { WeatherCard } from "@/components/dashboard/WeatherCard";
+import { FamilyProgress } from "@/components/dashboard/FamilyProgress";
+import { User, CalendarCheck, CalendarDays, CalendarRange } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { format } from "date-fns";
+import { fr } from "date-fns/locale";
 
 export default function Dashboard() {
   return (
     <MainLayout>
       <div className="h-full flex flex-col">
-        {/* Message du jour - Optimisé pour l'espace */}
-        <div className="mb-5">
-          <DailyMessage />
-        </div>
-
-        {/* Grille principale des widgets - Optimisée pour 1920x1080 */}
-        <div className="flex-1 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5 min-h-0">
-          <MorningRoutine />
-          <DailyGoal />
-          <FamilyPoints />
-          <ScreenTime />
-
-          {/* Deuxième rangée - Hauteur réduite */}
-          <div className="calendar-card max-h-[180px]">
-            <h3 className="text-lg font-medium mb-2">Prochains événements</h3>
-            <div className="space-y-2 overflow-auto">
-              <div className="bg-pastel-pink/20 p-2 rounded-lg">
-                <p className="text-sm">09:00 - École Emma</p>
-              </div>
-              <div className="bg-pastel-blue/20 p-2 rounded-lg">
-                <p className="text-sm">14:30 - Sport Lucas</p>
-              </div>
+        {/* En-tête avec la date et la navigation */}
+        <header className="mb-6">
+          <div className="flex items-center justify-between">
+            <div>
+              <h1 className="text-2xl font-bold text-gray-800 mb-1">
+                👨‍👩‍👧‍👦 Famille Martin
+              </h1>
+              <p className="text-gray-600">
+                {format(new Date(), "EEEE dd MMMM yyyy", { locale: fr })}
+              </p>
+            </div>
+            <div className="flex items-center gap-2">
+              <Button variant="outline" size="sm">
+                <User className="w-4 h-4 mr-2" />
+                Jour
+              </Button>
+              <Button variant="outline" size="sm">
+                <CalendarCheck className="w-4 h-4 mr-2" />
+                Semaine
+              </Button>
+              <Button variant="outline" size="sm">
+                <CalendarRange className="w-4 h-4 mr-2" />
+                Mois
+              </Button>
             </div>
           </div>
+        </header>
 
-          <div className="calendar-card max-h-[180px]">
-            <h3 className="text-lg font-medium mb-2">Tâches en cours</h3>
-            <div className="space-y-2 overflow-auto">
-              <div className="bg-pastel-orange/20 p-2 rounded-lg">
-                <p className="text-sm">Ranger la chambre - Emma</p>
-              </div>
-            </div>
+        {/* Grille principale */}
+        <div className="grid gap-6 grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
+          <div className="space-y-6">
+            <DailyMessage />
+            <WeatherCard />
           </div>
-
-          <div className="calendar-card max-h-[180px]">
-            <h3 className="text-lg font-medium mb-2">Météo</h3>
-            <div className="bg-pastel-yellow/20 p-3 rounded-lg text-center">
-              <p className="text-2xl font-medium">22°C</p>
-              <p className="text-sm text-gray-600">Ensoleillé</p>
-            </div>
-          </div>
-
-          <div className="calendar-card max-h-[180px]">
-            <h3 className="text-lg font-medium mb-2">Points du jour</h3>
-            <div className="text-center">
-              <span className="text-3xl font-bold text-blue-500">45</span>
-              <span className="text-gray-500">/100</span>
-            </div>
+          <div className="md:col-span-2">
+            <FamilyProgress />
           </div>
         </div>
       </div>
