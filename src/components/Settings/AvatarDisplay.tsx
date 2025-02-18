@@ -1,7 +1,7 @@
 
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { Sparkles, Camera } from "lucide-react";
-import { cn } from "@/lib/utils";
+import { clsx } from "clsx";
 import { Member } from "@/types/database.types";
 
 interface AvatarDisplayProps {
@@ -57,7 +57,7 @@ export function AvatarDisplay({
 
   return (
     <div className="relative group">
-      <Avatar className={cn(
+      <Avatar className={clsx(
         "ring-4 ring-purple-200 group-hover:ring-purple-300 transition-all duration-300",
         className
       )}>

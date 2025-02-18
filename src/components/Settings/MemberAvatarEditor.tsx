@@ -6,8 +6,9 @@ import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useToast } from "@/components/ui/use-toast";
-import { Save, Sparkles, Wand2 } from "lucide-react";
+import { Save, Sparkles, Wand2, Camera, Palette } from "lucide-react";
 import { Progress } from "@/components/ui/progress";
+import { clsx } from "clsx";
 import { AvatarDisplay } from "./AvatarDisplay";
 import { AvatarUploader } from "./AvatarUploader";
 import { PreferencesForm } from "./PreferencesForm";
@@ -186,7 +187,7 @@ export function MemberAvatarEditor({ member, onClose }: MemberAvatarEditorProps)
             <div className="grid gap-4 md:grid-cols-2">
               <Button
                 variant={avatarType === "photo" ? "default" : "outline"}
-                className={cn(
+                className={clsx(
                   "h-auto p-6 space-y-3 rounded-xl transition-all",
                   "hover:scale-105 hover:shadow-lg",
                   avatarType === "photo" && "bg-gradient-to-r from-blue-500 to-purple-500"
@@ -196,12 +197,12 @@ export function MemberAvatarEditor({ member, onClose }: MemberAvatarEditorProps)
                 <div className="w-16 h-16 rounded-full bg-white/90 flex items-center justify-center mx-auto">
                   <Camera className="w-8 h-8 text-blue-500" />
                 </div>
-                <p className="text-lg font-medium">Photo perso</p>
+                <p className="text-lg font-medium">Télécharger une photo de moi</p>
               </Button>
 
               <Button
                 variant={avatarType === "illustrated" ? "default" : "outline"}
-                className={cn(
+                className={clsx(
                   "h-auto p-6 space-y-3 rounded-xl transition-all",
                   "hover:scale-105 hover:shadow-lg",
                   avatarType === "illustrated" && "bg-gradient-to-r from-blue-500 to-purple-500"
@@ -211,7 +212,7 @@ export function MemberAvatarEditor({ member, onClose }: MemberAvatarEditorProps)
                 <div className="w-16 h-16 rounded-full bg-white/90 flex items-center justify-center mx-auto">
                   <Palette className="w-8 h-8 text-purple-500" />
                 </div>
-                <p className="text-lg font-medium">Avatar illustré</p>
+                <p className="text-lg font-medium">Créer mon personnage</p>
               </Button>
             </div>
 
@@ -257,7 +258,7 @@ export function MemberAvatarEditor({ member, onClose }: MemberAvatarEditorProps)
           disabled={isLoading}
         >
           <Sparkles className="w-5 h-5 mr-2" />
-          {isLoading ? "Enregistrement..." : "C'est parfait, je valide !"}
+          {isLoading ? "Enregistrement..." : "Valider mon avatar magique !"}
         </Button>
       </div>
     </div>

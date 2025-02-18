@@ -3,7 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { cn } from "@/lib/utils";
+import { clsx } from "clsx";
 
 interface AvatarItemSelectorProps {
   type: 'hair' | 'clothes' | 'accessory';
@@ -38,7 +38,7 @@ export function AvatarItemSelector({ type, selectedItemId, onSelectItem }: Avata
             key={item.id}
             variant="outline"
             size="sm"
-            className={cn(
+            className={clsx(
               "h-[80px] w-[80px] p-2 transition-all rounded-xl",
               "hover:scale-105 hover:shadow-md",
               "active:scale-95",
