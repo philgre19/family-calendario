@@ -36,10 +36,17 @@ export function AvatarDisplay({
     enabled: !!memberId
   });
 
+  // Déterminer quel type d'avatar afficher
+  const shouldShowIllustrated = avatarType === "illustrated" && 
+    member && 
+    (member.current_hair || member.current_clothes || member.current_accessory);
+
+  const shouldShowPhoto = avatarType === "photo" && avatarUrl;
+
   return (
     <div className="flex justify-center mb-8">
       <div className="relative">
-        {avatarType === "illustrated" && member ? (
+        {shouldShowIllustrated ? (
           <AvatarPreview
             member={member}
             selectedHair={member.current_hair}
@@ -50,7 +57,7 @@ export function AvatarDisplay({
           />
         ) : (
           <Avatar className="w-32 h-32 ring-2 ring-primary/20 transition-all hover:ring-primary/40">
-            {avatarUrl ? (
+            {shouldShowPhoto ? (
               <AvatarImage 
                 src={avatarUrl} 
                 alt={memberName} 
