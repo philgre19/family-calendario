@@ -5,10 +5,10 @@ import { Camera } from "lucide-react";
 
 interface AvatarPreviewProps {
   member: Member;
-  selectedHair?: string;
-  selectedClothes?: string;
-  selectedAccessory?: string;
-  hairColor?: string;
+  selectedHair?: string | null;
+  selectedClothes?: string | null;
+  selectedAccessory?: string | null;
+  hairColor?: string | null;
   className?: string;
 }
 
