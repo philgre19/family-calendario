@@ -1,4 +1,3 @@
-
 import { navigation } from "./navigation";
 import {
   Sidebar as SidebarContainer,
@@ -14,46 +13,62 @@ import {
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
-} from "@/components/ui/tooltip";
+} from "@/components/ui/tooltip"; // Assure-toi que ce chemin est correct
+import { useState } from "react";
 
 export const Sidebar = () => {
   const location = useLocation();
+  const [hoveredItem, setHoveredItem] = useState<string | null>(null);
 
   return (
     <TooltipProvider>
-      <SidebarContainer className="w-[70px] fixed left-0 top-0 h-screen z-50">
-        <SidebarContent className="h-full flex items-center">
-          <SidebarGroup className="bg-[#0f31b3]/90 backdrop-blur-sm px-0 rounded-3xl mx-2 h-[94vh]
-                                  flex flex-col justify-between py-2">
+      <SidebarContainer className="w-[90px] fixed left-0 top-0 h-screen z-50">
+        <SidebarContent className="h-full flex items-center overflow-hidden">
+          <SidebarGroup className="bg-[#0f31b3] px-0 mx-0 h-full flex flex-col justify-between py-2 shadow-xl">
             <SidebarGroupContent>
               <SidebarMenu>
                 {navigation.map((item) => (
-                  <SidebarMenuItem key={item.name} className="relative my-0">
+                  <SidebarMenuItem
+                    key={item.name}
+                    className="relative my-0 flex items-center justify-center group"
+                    onMouseEnter={() => setHoveredItem(item.name)}
+                    onMouseLeave={() => setHoveredItem(null)}
+                  >
                     <Tooltip>
                       <TooltipTrigger asChild>
                         <Link
                           to={item.path}
-                          className={`sidebar-link group ${item.hoverColor} ${
-                            location.pathname === item.path ? "active" : ""
+                          className={`relative flex items-center justify-center w-12 h-12 transition-all duration-300 ${
+                            item.hoverColor
+                          } ${
+                            location.pathname === item.path
+                              ? "bg-blue-900"
+                              : "hover:bg-blue-800"
                           }`}
                         >
-                          <item.icon className="h-4 w-4 text-gray-100 transition-all duration-200 
-                                              group-hover:scale-110 group-hover:drop-shadow-glow" />
+                          <item.icon className="h-6 w-6 text-gray-100 transition-transform transform group-hover:scale-110" />
                           {item.badge && (
-                            <span className={`badge ${
-                              item.badge.type === 'warning' ? 'bg-red-500' :
-                              item.badge.type === 'info' ? 'bg-blue-500' :
-                              'bg-yellow-500'
-                            } text-white text-[10px] font-semibold
-                              ${item.badge.type === 'alert' ? 'animate-pulse' : ''}`}>
+                            <span
+                              className={`absolute top-0 right-0 transform translate-x-1/2 -translate-y-1/2 text-[10px] font-bold text-white rounded-full px-1 py-[1px] ${
+                                item.badge.type === "warning"
+                                  ? "bg-red-500"
+                                  : item.badge.type === "info"
+                                  ? "bg-blue-500"
+                                  : "bg-yellow-500"
+                              } ${
+                                item.badge.type === "alert"
+                                  ? "animate-pulse"
+                                  : ""
+                              }`}
+                            >
                               {item.badge.count || item.badge.icon}
                             </span>
                           )}
                         </Link>
                       </TooltipTrigger>
-                      <TooltipContent 
-                        side="right" 
-                        className="custom-tooltip slide-tooltip"
+                      <TooltipContent
+                        side="right"
+                        className="custom-tooltip slide-tooltip bg-white text-black px-3 py-1 rounded-lg shadow-md text-sm"
                         sideOffset={5}
                       >
                         {item.name}

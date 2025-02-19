@@ -1,8 +1,13 @@
+body {
+  margin: 0;
+  padding: 0;
+  background-color: #0f31b3; /* Le bleu de ta sidebar */
+  font-family: 'Inter', sans-serif;
+}
 #root {
-  max-width: 1280px;
-  margin: 0 auto;
-  padding: 2rem;
-  text-align: center;
+  margin: 0;
+  padding: 0;
+  background-color: #0f31b3; /* Pour être sûr que tout est uni */
 }
 
 .logo {
@@ -40,3 +45,29 @@
 .read-the-docs {
   color: #888;
 }
+@keyframes fadeInSlow {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.animate-fadeInSlow {
+  animation: fadeInSlow 0.8s ease-out;
+}
+
+@keyframes wiggle {
+  0%, 100% { transform: rotate(-5deg); }
+  50% { transform: rotate(5deg); }
+}
+.animate-wiggle { animation: wiggle 1s ease-in-out infinite; }
+
+@keyframes pulse-slow {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+  100% { transform: scale(1); }
+}
+.animate-pulse-slow { animation: pulse-slow 3s infinite; }
+
+@keyframes jumpIn {
+  0% { transform: translateY(-10px); opacity: 0; }
+  100% { transform: translateY(0); opacity: 1; }
+}
+.animate-jumpIn { animation: jumpIn 0.5s ease-out; }
