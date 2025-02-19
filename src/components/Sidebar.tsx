@@ -1,3 +1,4 @@
+
 import { navigation } from "./navigation";
 import {
   Sidebar as SidebarContainer,
@@ -13,7 +14,7 @@ import {
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
-} from "@/components/ui/tooltip"; // Assure-toi que ce chemin est correct
+} from "@/components/ui/tooltip";
 import { useState } from "react";
 
 export const Sidebar = () => {
@@ -22,7 +23,7 @@ export const Sidebar = () => {
 
   return (
     <TooltipProvider>
-      <SidebarContainer className="w-[90px] fixed left-0 top-0 h-screen z-50">
+      <SidebarContainer className="w-[80px] fixed left-0 top-0 h-screen z-50">
         <SidebarContent className="h-full flex items-center overflow-hidden">
           <SidebarGroup className="bg-[#0f31b3] px-0 mx-0 h-full flex flex-col justify-between py-2 shadow-xl">
             <SidebarGroupContent>

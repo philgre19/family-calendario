@@ -9,6 +9,33 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
+      achievements: {
+        Row: {
+          created_at: string | null
+          description: string | null
+          icon: string | null
+          id: string
+          title: string
+          xp_reward: number | null
+        }
+        Insert: {
+          created_at?: string | null
+          description?: string | null
+          icon?: string | null
+          id?: string
+          title: string
+          xp_reward?: number | null
+        }
+        Update: {
+          created_at?: string | null
+          description?: string | null
+          icon?: string | null
+          id?: string
+          title?: string
+          xp_reward?: number | null
+        }
+        Relationships: []
+      }
       avatar_items: {
         Row: {
           color: string | null
@@ -108,6 +135,33 @@ export type Database = {
         }
         Relationships: []
       }
+      daily_challenges: {
+        Row: {
+          completed: boolean | null
+          created_at: string | null
+          description: string | null
+          id: string
+          title: string
+          xp_reward: number | null
+        }
+        Insert: {
+          completed?: boolean | null
+          created_at?: string | null
+          description?: string | null
+          id?: string
+          title: string
+          xp_reward?: number | null
+        }
+        Update: {
+          completed?: boolean | null
+          created_at?: string | null
+          description?: string | null
+          id?: string
+          title?: string
+          xp_reward?: number | null
+        }
+        Relationships: []
+      }
       event_participants: {
         Row: {
           confirmed: boolean | null
@@ -115,6 +169,7 @@ export type Database = {
           event_id: string | null
           id: string
           member_id: string | null
+          status: string | null
         }
         Insert: {
           confirmed?: boolean | null
@@ -122,6 +177,7 @@ export type Database = {
           event_id?: string | null
           id?: string
           member_id?: string | null
+          status?: string | null
         }
         Update: {
           confirmed?: boolean | null
@@ -129,6 +185,7 @@ export type Database = {
           event_id?: string | null
           id?: string
           member_id?: string | null
+          status?: string | null
         }
         Relationships: [
           {
@@ -180,6 +237,39 @@ export type Database = {
         }
         Relationships: []
       }
+      family_goals: {
+        Row: {
+          completed: boolean | null
+          created_at: string | null
+          description: string | null
+          id: string
+          progress: number | null
+          reward: string | null
+          target: number
+          title: string
+        }
+        Insert: {
+          completed?: boolean | null
+          created_at?: string | null
+          description?: string | null
+          id?: string
+          progress?: number | null
+          reward?: string | null
+          target: number
+          title: string
+        }
+        Update: {
+          completed?: boolean | null
+          created_at?: string | null
+          description?: string | null
+          id?: string
+          progress?: number | null
+          reward?: string | null
+          target?: number
+          title?: string
+        }
+        Relationships: []
+      }
       levels: {
         Row: {
           created_at: string
@@ -210,6 +300,56 @@ export type Database = {
             foreignKeyName: "levels_member_id_fkey"
             columns: ["member_id"]
             isOneToOne: true
+            referencedRelation: "members"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      member_achievements: {
+        Row: {
+          achievement_id: string | null
+          id: string
+          member_id: string | null
+          unlocked_at: string | null
+        }
+        Insert: {
+          achievement_id?: string | null
+          id?: string
+          member_id?: string | null
+          unlocked_at?: string | null
+        }
+        Update: {
+          achievement_id?: string | null
+          id?: string
+          member_id?: string | null
+          unlocked_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "fk_member_achievements_achievement"
+            columns: ["achievement_id"]
+            isOneToOne: false
+            referencedRelation: "achievements"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "fk_member_achievements_member"
+            columns: ["member_id"]
+            isOneToOne: false
+            referencedRelation: "members"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "member_achievements_achievement_id_fkey"
+            columns: ["achievement_id"]
+            isOneToOne: false
+            referencedRelation: "achievements"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "member_achievements_member_id_fkey"
+            columns: ["member_id"]
+            isOneToOne: false
             referencedRelation: "members"
             referencedColumns: ["id"]
           },
@@ -265,9 +405,11 @@ export type Database = {
           current_clothes: string | null
           current_hair: string | null
           id: string
+          level: number | null
           name: string
           participate_in_quests: boolean | null
           quest_language_style: string | null
+          xp: number | null
         }
         Insert: {
           avatar_type?: string
@@ -279,9 +421,11 @@ export type Database = {
           current_clothes?: string | null
           current_hair?: string | null
           id?: string
+          level?: number | null
           name: string
           participate_in_quests?: boolean | null
           quest_language_style?: string | null
+          xp?: number | null
         }
         Update: {
           avatar_type?: string
@@ -293,9 +437,11 @@ export type Database = {
           current_clothes?: string | null
           current_hair?: string | null
           id?: string
+          level?: number | null
           name?: string
           participate_in_quests?: boolean | null
           quest_language_style?: string | null
+          xp?: number | null
         }
         Relationships: [
           {
@@ -328,6 +474,156 @@ export type Database = {
           },
         ]
       }
+      monthly_rankings: {
+        Row: {
+          created_at: string | null
+          id: string
+          member_id: string | null
+          month: string
+          points: number | null
+          rank: number | null
+          year: number
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          member_id?: string | null
+          month: string
+          points?: number | null
+          rank?: number | null
+          year: number
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          member_id?: string | null
+          month?: string
+          points?: number | null
+          rank?: number | null
+          year?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "fk_monthly_rankings_member"
+            columns: ["member_id"]
+            isOneToOne: false
+            referencedRelation: "members"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "monthly_rankings_member_id_fkey"
+            columns: ["member_id"]
+            isOneToOne: false
+            referencedRelation: "members"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      notifications: {
+        Row: {
+          created_at: string | null
+          id: string
+          member_id: string | null
+          message: string
+          read: boolean | null
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          member_id?: string | null
+          message: string
+          read?: boolean | null
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          member_id?: string | null
+          message?: string
+          read?: boolean | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "fk_notifications_member"
+            columns: ["member_id"]
+            isOneToOne: false
+            referencedRelation: "members"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "notifications_member_id_fkey"
+            columns: ["member_id"]
+            isOneToOne: false
+            referencedRelation: "members"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      points_history: {
+        Row: {
+          created_at: string | null
+          id: string
+          member_id: string | null
+          points: number | null
+          reason: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          member_id?: string | null
+          points?: number | null
+          reason?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          member_id?: string | null
+          points?: number | null
+          reason?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "fk_points_history_member"
+            columns: ["member_id"]
+            isOneToOne: false
+            referencedRelation: "members"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "points_history_member_id_fkey"
+            columns: ["member_id"]
+            isOneToOne: false
+            referencedRelation: "members"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      rewards: {
+        Row: {
+          cost: number
+          created_at: string | null
+          description: string | null
+          id: string
+          image_url: string | null
+          name: string
+        }
+        Insert: {
+          cost: number
+          created_at?: string | null
+          description?: string | null
+          id?: string
+          image_url?: string | null
+          name: string
+        }
+        Update: {
+          cost?: number
+          created_at?: string | null
+          description?: string | null
+          id?: string
+          image_url?: string | null
+          name?: string
+        }
+        Relationships: []
+      }
       tasks: {
         Row: {
           assigned_to: string | null
@@ -335,6 +631,7 @@ export type Database = {
           created_at: string
           date: string | null
           description: string
+          difficulty: string | null
           gold_reward: number | null
           id: string
           members_ids: string[] | null
@@ -348,6 +645,7 @@ export type Database = {
           created_at?: string
           date?: string | null
           description: string
+          difficulty?: string | null
           gold_reward?: number | null
           id?: string
           members_ids?: string[] | null
@@ -361,6 +659,7 @@ export type Database = {
           created_at?: string
           date?: string | null
           description?: string
+          difficulty?: string | null
           gold_reward?: number | null
           id?: string
           members_ids?: string[] | null
@@ -377,6 +676,45 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      todos: {
+        Row: {
+          id: number
+          inserted_at: string
+          is_complete: boolean | null
+          task: string | null
+          user_id: string
+        }
+        Insert: {
+          id?: number
+          inserted_at?: string
+          is_complete?: boolean | null
+          task?: string | null
+          user_id: string
+        }
+        Update: {
+          id?: number
+          inserted_at?: string
+          is_complete?: boolean | null
+          task?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
+      widgets_positions: {
+        Row: {
+          created_at: string
+          id: number
+        }
+        Insert: {
+          created_at?: string
+          id?: number
+        }
+        Update: {
+          created_at?: string
+          id?: number
+        }
+        Relationships: []
       }
     }
     Views: {
