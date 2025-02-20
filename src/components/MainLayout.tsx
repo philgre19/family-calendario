@@ -5,7 +5,7 @@ import { SidebarProvider } from "./ui/sidebar";
 export const MainLayout = ({ children }: { children: React.ReactNode }) => {
   return (
     <SidebarProvider>
-      <div className="h-screen w-screen flex overflow-hidden bg-gray-50">
+      <div className="h-screen w-screen flex overflow-hidden">
         <Sidebar />
         <main className="flex-1 bg-white">
           <div className="h-full flex flex-col">
