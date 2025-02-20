@@ -41,7 +41,7 @@ interface CalendarEvent extends Event {
 }
 
 export function CalendarView() {
-  const [view, setView] = useState<string>(Views.WEEK);
+  const [view, setView] = useState<string>(Views.MONTH);
   const [date, setDate] = useState(new Date());
 
   const { data: events = [] } = useQuery({
@@ -89,7 +89,7 @@ export function CalendarView() {
   }, []);
 
   return (
-    <div className="flex flex-col h-full bg-white/95 backdrop-blur-sm rounded-2xl p-6 shadow-sm">
+    <div className="flex flex-col h-full bg-white/95 backdrop-blur-sm rounded-2xl shadow-sm">
       <CalendarHeader
         date={date}
         view={view}
@@ -105,14 +105,14 @@ export function CalendarView() {
           animate={{ opacity: 1, y: 0 }}
           exit={{ opacity: 0 }}
           transition={{ duration: 0.2 }}
-          className="flex-1"
+          className="flex-1 px-6 py-4"
         >
           <Calendar
             localizer={localizer}
             events={events}
             startAccessor="start"
             endAccessor="end"
-            style={{ height: '100%' }}
+            style={{ height: 'calc(100vh - 180px)' }}
             view={view as any}
             onView={handleViewChange}
             onNavigate={handleNavigate}
@@ -128,4 +128,4 @@ export function CalendarView() {
       </AnimatePresence>
     </div>
   );
-}
+};

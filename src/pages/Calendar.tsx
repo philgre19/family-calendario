@@ -9,25 +9,8 @@ export default function Calendar() {
   return (
     <MainLayout>
       <div className="flex h-screen overflow-hidden">
-        {/* Sidebar compacte avec résumé */}
-        <motion.aside 
-          className="w-60 bg-white border-r border-gray-100 p-4 shrink-0 overflow-y-auto transition-all duration-300 ease-in-out"
-          initial={{ width: 60 }}
-          animate={{ width: 60 }}
-          whileHover={{ width: 240 }}
-        >
-          <div className="space-y-4">
-            <div className="opacity-0 group-hover:opacity-100 transition-opacity">
-              <DailyMessage />
-            </div>
-            <div className="opacity-0 group-hover:opacity-100 transition-opacity">
-              <WeatherCard />
-            </div>
-          </div>
-        </motion.aside>
-
         {/* Zone principale du calendrier */}
-        <div className="flex-1 overflow-hidden">
+        <div className="flex-1 overflow-hidden px-6">
           <AnimatePresence mode="wait">
             <motion.div 
               key="calendar"

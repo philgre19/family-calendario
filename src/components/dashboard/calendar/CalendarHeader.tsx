@@ -12,7 +12,7 @@ interface CalendarHeaderProps {
 
 export function CalendarHeader({ date, view, views, onNavigate, onViewChange }: CalendarHeaderProps) {
   return (
-    <div className="flex items-center justify-between mb-6">
+    <div className="flex items-center justify-between px-6 pt-6 pb-2">
       <div className="flex gap-2">
         <button 
           onClick={() => onNavigate(new Date())}
@@ -37,7 +37,7 @@ export function CalendarHeader({ date, view, views, onNavigate, onViewChange }: 
         </div>
       </div>
 
-      <h2 className="text-xl font-semibold text-gray-900">
+      <h2 className="text-2xl font-semibold text-gray-900">
         {format(date, 'MMMM yyyy', { locale: fr })}
       </h2>
 

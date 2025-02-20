@@ -4,7 +4,7 @@
 }
 
 .custom-calendar .rbc-calendar {
-  @apply bg-white/95 backdrop-blur-sm rounded-2xl shadow-sm border border-gray-100/20;
+  @apply bg-white/95 backdrop-blur-sm rounded-2xl shadow-sm border-none;
 }
 
 .custom-calendar .rbc-toolbar {
@@ -25,24 +25,28 @@
   @apply border-gray-100 rounded-xl overflow-hidden shadow-sm;
 }
 
-.custom-calendar .rbc-time-header {
+.custom-calendar .rbc-header {
+  @apply py-3 text-sm font-semibold text-gray-600 border-gray-100;
+}
+
+.custom-calendar .rbc-month-row {
   @apply border-gray-100;
 }
 
-.custom-calendar .rbc-time-content {
-  @apply border-gray-100;
+.custom-calendar .rbc-date-cell {
+  @apply p-1 text-right;
 }
 
-.custom-calendar .rbc-day-bg {
-  @apply transition-colors duration-200;
-}
-
-.custom-calendar .rbc-today {
-  @apply bg-blue-50/50 backdrop-blur-sm;
+.custom-calendar .rbc-date-cell > a {
+  @apply text-gray-700 font-medium text-sm px-2;
 }
 
 .custom-calendar .rbc-off-range-bg {
   @apply bg-gray-50/50;
+}
+
+.custom-calendar .rbc-today {
+  @apply bg-blue-50/50 backdrop-blur-sm;
 }
 
 .custom-calendar .rbc-event {
@@ -79,55 +83,31 @@
   @apply bg-red-500/90 text-white backdrop-blur-sm;
 }
 
-/* Badge styles */
-.event-badge {
-  @apply absolute -top-1 -right-1 w-5 h-5 rounded-full flex items-center justify-center 
-         text-[10px] font-bold shadow-sm border-2 border-white;
+/* Styles spécifiques pour les cellules du calendrier */
+.rbc-month-view {
+  @apply border-0;
 }
 
-.event-badge-meal {
-  @apply bg-orange-400 text-white;
+.rbc-month-row + .rbc-month-row {
+  @apply border-t border-gray-100;
 }
 
-.event-badge-sport {
-  @apply bg-purple-400 text-white;
+.rbc-day-bg + .rbc-day-bg {
+  @apply border-l border-gray-100;
 }
 
-.event-badge-school {
-  @apply bg-blue-400 text-white;
+.rbc-month-header {
+  @apply mb-2;
 }
 
-.event-badge-appointment {
-  @apply bg-green-400 text-white;
+.rbc-row-content {
+  @apply z-10;
 }
 
-/* Member bubbles */
-.member-bubble {
-  @apply relative flex flex-col items-center gap-2 p-2 transition-all duration-200 
-         hover:transform hover:scale-105 cursor-pointer;
+.rbc-date-cell.rbc-now {
+  @apply text-blue-600 font-semibold;
 }
 
-.member-bubble-avatar {
-  @apply w-12 h-12 rounded-full border-2 border-white shadow-md 
-         flex items-center justify-center text-lg font-bold text-white
-         transition-transform duration-200;
-}
-
-.member-bubble-progress {
-  @apply w-full h-1 rounded-full bg-gray-200 overflow-hidden;
-}
-
-.member-bubble-progress-bar {
-  @apply h-full transition-all duration-300 ease-out;
-}
-
-/* Sidebar modifications */
-.sidebar-icon {
-  @apply w-10 h-10 rounded-xl flex items-center justify-center
-         transition-all duration-200 hover:bg-white/10 hover:scale-105
-         text-white/80 hover:text-white;
-}
-
-.sidebar-icon.active {
-  @apply bg-white/20 text-white shadow-lg;
+.rbc-row-bg {
+  @apply z-0;
 }
