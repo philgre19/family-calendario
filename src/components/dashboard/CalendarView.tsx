@@ -1,4 +1,3 @@
-
 import { useState, useCallback } from 'react';
 import { Calendar, dateFnsLocalizer, Views } from 'react-big-calendar';
 import { format, parse, startOfWeek, getDay } from 'date-fns';
@@ -33,6 +32,7 @@ interface CalendarEvent extends Event {
   start: Date;
   end: Date;
   className: string;
+  color?: string;
 }
 
 export function CalendarView() {
@@ -76,11 +76,24 @@ export function CalendarView() {
     return {
       className: `${event.className} p-2 rounded-lg shadow-sm border-none transition-all duration-200 hover:scale-[1.02]`,
       style: {
-        backgroundColor: event.color || '#4F46E5',
+        backgroundColor: event.color || getEventColor(event.type),
         border: 'none',
       }
     };
   }, []);
+
+  const getEventColor = (type?: string) => {
+    switch (type) {
+      case 'birthday':
+        return '#FCD34D';
+      case 'family':
+        return '#34D399';
+      case 'important':
+        return '#EF4444';
+      default:
+        return '#4F46E5';
+    }
+  };
 
   return (
     <div className="flex flex-col h-full bg-white rounded-lg shadow-sm">
