@@ -23,11 +23,11 @@ export default function Settings() {
       
       if (error) throw error;
       
-      // Ajouter la propriété current_hair_color avec une valeur par défaut en initialisant directement l'objet
       const membersWithHairColor = data.map(member => {
         const memberData: Member = {
           ...member,
           current_hair_color: null,
+          avatar_type: member.avatar_type as 'illustrated' | 'photo',
         };
         return memberData;
       });
