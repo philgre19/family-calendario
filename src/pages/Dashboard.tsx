@@ -18,7 +18,7 @@ export default function Dashboard() {
   const BADGES = [
     { threshold: 10, title: 'Départ en force', icon: '🚀', message: 'Bravo, tu démarres bien !' },
     { threshold: 25, title: 'Super Organisateur', icon: '🏆', message: 'Tu gères comme un pro !' },
-    { threshold: 50, title: 'Champion de la Maison', icon: '🎖️', message: 'Toute la famille t'admire !' },
+    { threshold: 50, title: 'Champion de la Maison', icon: '🎖️', message: 'Toute la famille t\'admire !' }
   ];
 
   useEffect(() => {
