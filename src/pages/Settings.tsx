@@ -23,10 +23,16 @@ export default function Settings() {
       
       if (error) throw error;
       
-      // Ajouter la propriété current_hair_color avec une valeur par défaut en initialisant directement l'objet
+      // Ajouter la propriété current_hair_color et valider avatar_type
       const membersWithHairColor = data.map(member => {
+        // Vérifier et convertir avatar_type en valeur valide
+        const validatedAvatarType = member.avatar_type === "illustrated" || member.avatar_type === "photo" 
+          ? member.avatar_type 
+          : "illustrated"; // valeur par défaut si invalide
+        
         const memberData: Member = {
           ...member,
+          avatar_type: validatedAvatarType as "illustrated" | "photo",
           current_hair_color: null,
         };
         return memberData;
