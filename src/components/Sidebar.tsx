@@ -16,7 +16,7 @@ export const Sidebar = () => {
                     <Tooltip>
                       <TooltipTrigger asChild>
                         <Link to={item.path} className={`relative flex items-center justify-center w-10 h-10 mx-auto rounded-lg transition-all duration-300 ${item.hoverColor} ${location.pathname === item.path ? "bg-blue-900" : "hover:bg-blue-800"}`}>
-                          <item.icon className="h-5 w-5 text-gray-100 transition-transform transform group-hover:scale-110 px-0 py-0 my-0 mx-[3px] rounded-none" />
+                          <item.icon className="h-5 w-5 text-gray-100 transition-transform transform group-hover:scale-110" />
                           {item.badge && <span className={`absolute -top-1 -right-1 flex items-center justify-center min-w-[16px] h-4 text-[10px] font-bold text-white rounded-full px-1 ${item.badge.type === "warning" ? "bg-red-500" : item.badge.type === "info" ? "bg-blue-500" : "bg-yellow-500"} ${item.badge.type === "alert" ? "animate-pulse" : ""}`}>
                               {item.badge.count || item.badge.icon}
                             </span>}
