@@ -23,9 +23,9 @@ export const Sidebar = () => {
 
   return (
     <TooltipProvider>
-      <SidebarContainer className="w-16 h-screen z-50">
-        <SidebarContent className="h-full flex items-center">
-          <SidebarGroup className="bg-[#0f31b3] h-full flex flex-col justify-between py-2 shadow-xl w-full">
+      <SidebarContainer className="w-16 h-full">
+        <SidebarContent className="h-full">
+          <SidebarGroup className="h-full flex flex-col justify-between py-2 w-full">
             <SidebarGroupContent>
               <SidebarMenu>
                 {navigation.map((item) => (
