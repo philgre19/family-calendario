@@ -1,3 +1,4 @@
+
 import { useState, useCallback } from 'react';
 import { Calendar, dateFnsLocalizer, Views } from 'react-big-calendar';
 import { format, parse, startOfWeek, getDay } from 'date-fns';
@@ -6,6 +7,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { Event } from '@/types/database.types';
+import { Utensils, Running, School, CalendarCheck } from 'lucide-react';
 import 'react-big-calendar/lib/css/react-big-calendar.css';
 import './CalendarView.css';
 
@@ -33,11 +35,20 @@ interface CalendarEvent extends Event {
   end: Date;
   className: string;
   color?: string;
+  badges?: string[];
 }
 
+const eventBadgeIcons: Record<string, React.ReactNode> = {
+  meal: <Utensils size={12} />,
+  sport: <Running size={12} />,
+  school: <School size={12} />,
+  appointment: <CalendarCheck size={12} />,
+};
+
 export function CalendarView() {
-  const [view, setView] = useState<string>(Views.MONTH);
+  const [view, setView] = useState<string>(Views.WEEK); // Changed default to week view
   const [date, setDate] = useState(new Date());
+  const [selectedMember, setSelectedMember] = useState<string | null>(null);
 
   const { data: events = [] } = useQuery({
     queryKey: ['calendar-events'],
@@ -60,9 +71,14 @@ export function CalendarView() {
         start: new Date(event.start_date),
         end: new Date(event.end_date),
         className: `event-${event.type || 'default'}`,
+        badges: ['meal', 'sport', 'school', 'appointment'].filter(() => Math.random() > 0.5), // Simulation pour la démo
       }));
     },
   });
+
+  const filteredEvents = selectedMember
+    ? events.filter(event => event.member_id === selectedMember)
+    : events;
 
   const handleNavigate = useCallback((newDate: Date) => {
     setDate(newDate);
@@ -95,26 +111,47 @@ export function CalendarView() {
     }
   };
 
+  const components = {
+    event: (props: any) => (
+      <div className="relative p-1">
+        <div className="font-medium">{props.title}</div>
+        <div className="text-sm opacity-80">{format(props.event.start, 'HH:mm')}</div>
+        <div className="absolute top-0 right-0 flex -space-x-1">
+          {props.event.badges?.map((badge: string, index: number) => (
+            <div
+              key={badge}
+              className={`event-badge event-badge-${badge}`}
+              style={{ zIndex: props.event.badges.length - index }}
+            >
+              {eventBadgeIcons[badge]}
+            </div>
+          ))}
+        </div>
+      </div>
+    ),
+  };
+
   return (
-    <div className="flex flex-col h-full bg-white rounded-lg shadow-sm">
-      <div className="flex items-center justify-between p-4 border-b">
+    <div className="flex flex-col h-full bg-white/95 backdrop-blur-sm rounded-2xl p-6 shadow-sm">
+      <div className="flex items-center justify-between mb-6">
         <div className="flex gap-2">
           <button 
             onClick={() => handleNavigate(new Date())}
-            className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50"
+            className="px-4 py-2 text-sm font-medium text-gray-700 bg-white/80 backdrop-blur-sm
+                     border border-gray-200 rounded-lg hover:bg-gray-50 transition-all duration-200"
           >
             Aujourd'hui
           </button>
           <div className="flex gap-1">
             <button 
               onClick={() => handleNavigate(new Date(date.setMonth(date.getMonth() - 1)))}
-              className="p-2 text-gray-700 hover:bg-gray-50 rounded-md"
+              className="p-2 text-gray-700 hover:bg-gray-50 rounded-lg transition-colors"
             >
               ←
             </button>
             <button 
               onClick={() => handleNavigate(new Date(date.setMonth(date.getMonth() + 1)))}
-              className="p-2 text-gray-700 hover:bg-gray-50 rounded-md"
+              className="p-2 text-gray-700 hover:bg-gray-50 rounded-lg transition-colors"
             >
               →
             </button>
@@ -130,9 +167,9 @@ export function CalendarView() {
             <button
               key={viewKey}
               onClick={() => handleViewChange(viewKey)}
-              className={`px-4 py-2 text-sm font-medium rounded-md transition-colors
+              className={`px-4 py-2 text-sm font-medium rounded-lg transition-all duration-200
                 ${view === viewKey 
-                  ? 'bg-blue-50 text-blue-700 border border-blue-200'
+                  ? 'bg-blue-50 text-blue-700 border border-blue-200 shadow-sm'
                   : 'text-gray-700 hover:bg-gray-50 border border-transparent'
                 }`}
             >
@@ -144,6 +181,37 @@ export function CalendarView() {
         </div>
       </div>
 
+      <div className="flex gap-4 mb-6 px-2">
+        {['Alice', 'Bob', 'Charlie'].map((member, index) => (
+          <motion.div
+            key={member}
+            className="member-bubble"
+            onClick={() => setSelectedMember(selectedMember === member ? null : member)}
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+          >
+            <div 
+              className="member-bubble-avatar"
+              style={{
+                backgroundColor: ['#FF6B6B', '#4ECDC4', '#45B7D1'][index],
+                opacity: selectedMember && selectedMember !== member ? 0.5 : 1
+              }}
+            >
+              {member[0]}
+            </div>
+            <div className="member-bubble-progress">
+              <div 
+                className="member-bubble-progress-bar"
+                style={{
+                  width: `${Math.random() * 100}%`,
+                  backgroundColor: ['#FF6B6B', '#4ECDC4', '#45B7D1'][index]
+                }}
+              />
+            </div>
+          </motion.div>
+        ))}
+      </div>
+
       <AnimatePresence mode="wait">
         <motion.div 
           key={view}
@@ -151,11 +219,11 @@ export function CalendarView() {
           animate={{ opacity: 1, y: 0 }}
           exit={{ opacity: 0 }}
           transition={{ duration: 0.2 }}
-          className="flex-1 p-4"
+          className="flex-1"
         >
           <Calendar
             localizer={localizer}
-            events={events}
+            events={filteredEvents}
             startAccessor="start"
             endAccessor="end"
             style={{ height: '100%' }}
@@ -165,6 +233,7 @@ export function CalendarView() {
             date={date}
             views={views}
             eventPropGetter={eventStyleGetter}
+            components={components}
             messages={{
               month: 'Mois',
               week: 'Semaine',

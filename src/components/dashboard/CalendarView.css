@@ -4,23 +4,33 @@
 }
 
 .custom-calendar .rbc-calendar {
-  @apply bg-white rounded-lg shadow-sm;
+  @apply bg-white/95 backdrop-blur-sm rounded-2xl shadow-sm border border-gray-100/20;
 }
 
 .custom-calendar .rbc-toolbar {
-  @apply mb-4;
+  @apply mb-4 flex flex-wrap gap-2 items-center;
 }
 
 .custom-calendar .rbc-toolbar button {
-  @apply px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50 transition-colors;
+  @apply px-4 py-2 text-sm font-medium text-gray-700 bg-white/80 backdrop-blur-sm 
+         border border-gray-200 rounded-lg hover:bg-gray-50 transition-all duration-200;
 }
 
 .custom-calendar .rbc-toolbar button.rbc-active {
-  @apply bg-blue-50 text-blue-700 border-blue-200;
+  @apply bg-blue-50 text-blue-700 border-blue-200 shadow-sm;
 }
 
-.custom-calendar .rbc-month-view {
-  @apply border-gray-200 rounded-lg overflow-hidden;
+.custom-calendar .rbc-month-view,
+.custom-calendar .rbc-time-view {
+  @apply border-gray-100 rounded-xl overflow-hidden shadow-sm;
+}
+
+.custom-calendar .rbc-time-header {
+  @apply border-gray-100;
+}
+
+.custom-calendar .rbc-time-content {
+  @apply border-gray-100;
 }
 
 .custom-calendar .rbc-day-bg {
@@ -28,19 +38,20 @@
 }
 
 .custom-calendar .rbc-today {
-  @apply bg-blue-50;
+  @apply bg-blue-50/50 backdrop-blur-sm;
 }
 
 .custom-calendar .rbc-off-range-bg {
-  @apply bg-gray-50;
+  @apply bg-gray-50/50;
 }
 
 .custom-calendar .rbc-event {
-  @apply rounded-lg shadow-sm border-none transition-all duration-200;
+  @apply rounded-lg shadow-sm border-none transition-all duration-200 backdrop-blur-sm;
+  padding: 4px 8px;
 }
 
 .custom-calendar .rbc-event:hover {
-  @apply transform scale-[1.02];
+  @apply transform scale-[1.02] shadow-md;
 }
 
 .custom-calendar .rbc-row-segment {
@@ -51,30 +62,72 @@
   @apply text-sm text-blue-600 hover:text-blue-800 transition-colors;
 }
 
-/* Responsive adjustments */
-@media (max-width: 640px) {
-  .custom-calendar .rbc-toolbar {
-    @apply flex-col gap-2;
-  }
-  
-  .custom-calendar .rbc-toolbar-label {
-    @apply text-base;
-  }
-}
-
-/* Types d'événements */
+/* Types d'événements avec effet glassmorphism */
 .event-default {
-  @apply bg-blue-500 text-white;
+  @apply bg-blue-500/90 text-white backdrop-blur-sm;
 }
 
 .event-birthday {
-  @apply bg-yellow-400 text-gray-900;
+  @apply bg-yellow-400/90 text-gray-900 backdrop-blur-sm;
 }
 
 .event-family {
-  @apply bg-green-500 text-white;
+  @apply bg-green-500/90 text-white backdrop-blur-sm;
 }
 
 .event-important {
-  @apply bg-red-500 text-white;
+  @apply bg-red-500/90 text-white backdrop-blur-sm;
+}
+
+/* Badge styles */
+.event-badge {
+  @apply absolute -top-1 -right-1 w-5 h-5 rounded-full flex items-center justify-center 
+         text-[10px] font-bold shadow-sm border-2 border-white;
+}
+
+.event-badge-meal {
+  @apply bg-orange-400 text-white;
+}
+
+.event-badge-sport {
+  @apply bg-purple-400 text-white;
+}
+
+.event-badge-school {
+  @apply bg-blue-400 text-white;
+}
+
+.event-badge-appointment {
+  @apply bg-green-400 text-white;
+}
+
+/* Member bubbles */
+.member-bubble {
+  @apply relative flex flex-col items-center gap-2 p-2 transition-all duration-200 
+         hover:transform hover:scale-105 cursor-pointer;
+}
+
+.member-bubble-avatar {
+  @apply w-12 h-12 rounded-full border-2 border-white shadow-md 
+         flex items-center justify-center text-lg font-bold text-white
+         transition-transform duration-200;
+}
+
+.member-bubble-progress {
+  @apply w-full h-1 rounded-full bg-gray-200 overflow-hidden;
+}
+
+.member-bubble-progress-bar {
+  @apply h-full transition-all duration-300 ease-out;
+}
+
+/* Sidebar modifications */
+.sidebar-icon {
+  @apply w-10 h-10 rounded-xl flex items-center justify-center
+         transition-all duration-200 hover:bg-white/10 hover:scale-105
+         text-white/80 hover:text-white;
+}
+
+.sidebar-icon.active {
+  @apply bg-white/20 text-white shadow-lg;
 }
