@@ -48,7 +48,6 @@ const eventBadgeIcons: Record<string, React.ReactNode> = {
 export function CalendarView() {
   const [view, setView] = useState<string>(Views.WEEK);
   const [date, setDate] = useState(new Date());
-  const [selectedMember, setSelectedMember] = useState<string | null>(null);
 
   const { data: events = [] } = useQuery({
     queryKey: ['calendar-events'],
@@ -75,14 +74,6 @@ export function CalendarView() {
       }));
     },
   });
-
-  const filteredEvents = selectedMember
-    ? events.filter(event => 
-        event.participants?.some(participant => 
-          participant.member_id === selectedMember
-        )
-      )
-    : events;
 
   const handleNavigate = useCallback((newDate: Date) => {
     setDate(newDate);
@@ -185,37 +176,6 @@ export function CalendarView() {
         </div>
       </div>
 
-      <div className="flex gap-4 mb-6 px-2">
-        {['Alice', 'Bob', 'Charlie'].map((member, index) => (
-          <motion.div
-            key={member}
-            className="member-bubble"
-            onClick={() => setSelectedMember(selectedMember === member ? null : member)}
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-          >
-            <div 
-              className="member-bubble-avatar"
-              style={{
-                backgroundColor: ['#FF6B6B', '#4ECDC4', '#45B7D1'][index],
-                opacity: selectedMember && selectedMember !== member ? 0.5 : 1
-              }}
-            >
-              {member[0]}
-            </div>
-            <div className="member-bubble-progress">
-              <div 
-                className="member-bubble-progress-bar"
-                style={{
-                  width: `${Math.random() * 100}%`,
-                  backgroundColor: ['#FF6B6B', '#4ECDC4', '#45B7D1'][index]
-                }}
-              />
-            </div>
-          </motion.div>
-        ))}
-      </div>
-
       <AnimatePresence mode="wait">
         <motion.div 
           key={view}
@@ -227,7 +187,7 @@ export function CalendarView() {
         >
           <Calendar
             localizer={localizer}
-            events={filteredEvents}
+            events={events}
             startAccessor="start"
             endAccessor="end"
             style={{ height: '100%' }}
