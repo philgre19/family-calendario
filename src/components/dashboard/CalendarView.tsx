@@ -7,7 +7,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { Event } from '@/types/database.types';
-import { Utensils, Running, School, CalendarCheck } from 'lucide-react';
+import { Utensils, Activity, School, CalendarCheck } from 'lucide-react';
 import 'react-big-calendar/lib/css/react-big-calendar.css';
 import './CalendarView.css';
 
@@ -40,13 +40,13 @@ interface CalendarEvent extends Event {
 
 const eventBadgeIcons: Record<string, React.ReactNode> = {
   meal: <Utensils size={12} />,
-  sport: <Running size={12} />,
+  sport: <Activity size={12} />,
   school: <School size={12} />,
   appointment: <CalendarCheck size={12} />,
 };
 
 export function CalendarView() {
-  const [view, setView] = useState<string>(Views.WEEK); // Changed default to week view
+  const [view, setView] = useState<string>(Views.WEEK);
   const [date, setDate] = useState(new Date());
   const [selectedMember, setSelectedMember] = useState<string | null>(null);
 
@@ -71,13 +71,17 @@ export function CalendarView() {
         start: new Date(event.start_date),
         end: new Date(event.end_date),
         className: `event-${event.type || 'default'}`,
-        badges: ['meal', 'sport', 'school', 'appointment'].filter(() => Math.random() > 0.5), // Simulation pour la démo
+        badges: ['meal', 'sport', 'school', 'appointment'].filter(() => Math.random() > 0.5),
       }));
     },
   });
 
   const filteredEvents = selectedMember
-    ? events.filter(event => event.member_id === selectedMember)
+    ? events.filter(event => 
+        event.participants?.some(participant => 
+          participant.member_id === selectedMember
+        )
+      )
     : events;
 
   const handleNavigate = useCallback((newDate: Date) => {
