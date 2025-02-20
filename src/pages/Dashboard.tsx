@@ -2,13 +2,13 @@
 import { MainLayout } from '@/components/MainLayout';
 import { DailyMessage } from '@/components/dashboard/DailyMessage';
 import { WeatherCard } from '@/components/dashboard/WeatherCard';
-import { User, CalendarCheck, CalendarRange, Plus, Trophy, Star } from 'lucide-react';
-import { Button } from '@/components/ui/button';
+import { User, CalendarRange, Star, Sparkles, Cloud, Trophy } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { format } from 'date-fns';
 import { fr } from 'date-fns/locale';
 import { toast } from 'sonner';
 import { CalendarView } from '@/components/dashboard/CalendarView';
+import { motion } from 'framer-motion';
 
 export default function Dashboard() {
   const [points, setPoints] = useState(0);
@@ -36,54 +36,74 @@ export default function Dashboard() {
         duration: 5000,
       });
     }
-  }, [points]);
-
-  const addPoints = (amount: number) => {
-    setPoints((prev) => prev + amount);
-    toast.success(`⭐ +${amount} points gagnés !`);
-  };
+  }, [points, badge]);
 
   return (
     <MainLayout>
       <div className="flex flex-col h-full bg-white p-4 overflow-hidden">
-        <header className="mb-4 flex justify-between items-center border-b pb-3">
-          <div>
+        <header className="mb-6">
+          <div className="flex justify-between items-center mb-4">
             <h1 className="text-4xl font-extrabold text-gray-900 flex items-center gap-2">
               👨‍👩‍👧‍👦 Famille Grenier
-              <Star className="text-yellow-500 animate-wiggle" />
+              <Star className="text-yellow-500 animate-pulse" />
             </h1>
-            <p className="text-gray-500 text-sm">{format(time, 'EEEE dd MMMM yyyy - HH:mm:ss', { locale: fr })}</p>
+            <p className="text-gray-500 text-sm">
+              {format(time, 'EEEE dd MMMM yyyy - HH:mm:ss', { locale: fr })}
+            </p>
           </div>
-          <div className="flex items-center gap-3">
-            <Button variant="outline" size="sm"><User className="w-4 h-4 mr-2" />Jour</Button>
-            <Button variant="outline" size="sm"><CalendarCheck className="w-4 h-4 mr-2" />Semaine</Button>
-            <Button variant="outline" size="sm"><CalendarRange className="w-4 h-4 mr-2" />Mois</Button>
-            <div className="flex items-center bg-yellow-100 text-yellow-900 px-3 py-1 rounded-lg shadow-inner animate-pulse-slow">
-              <Trophy className="w-5 h-5 mr-2 text-yellow-500" /> {points} points
+
+          <motion.div 
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="grid grid-cols-3 gap-4 p-4 bg-gray-50/80 backdrop-blur-sm rounded-xl shadow-sm"
+          >
+            {/* Mot du jour */}
+            <div className="flex items-center gap-3 px-4 border-r border-gray-200">
+              <Sparkles className="w-8 h-8 text-blue-500" />
+              <div>
+                <h3 className="text-sm font-medium text-gray-500">Mot du jour</h3>
+                <p className="text-lg font-semibold bg-gradient-to-r from-blue-500 to-purple-500 bg-clip-text text-transparent">
+                  Détermination 💪
+                </p>
+              </div>
             </div>
-          </div>
+
+            {/* Météo */}
+            <div className="flex items-center gap-3 px-4 border-r border-gray-200">
+              <Cloud className="w-8 h-8 text-blue-400" />
+              <div>
+                <h3 className="text-sm font-medium text-gray-500">Météo</h3>
+                <p className="text-lg font-semibold">22°C ☀️</p>
+              </div>
+            </div>
+
+            {/* Points */}
+            <div className="flex items-center gap-3 px-4">
+              <Trophy className="w-8 h-8 text-yellow-500" />
+              <div>
+                <h3 className="text-sm font-medium text-gray-500">Points Famille</h3>
+                <p className="text-lg font-semibold">{points} points ⭐</p>
+              </div>
+            </div>
+          </motion.div>
         </header>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-          <DailyMessage />
-          <WeatherCard />
-        </div>
-
-        <Button
-          className="w-full bg-green-100 text-green-800 hover:bg-green-200 transition rounded-lg mb-6 shadow-md"
-          onClick={() => { addPoints(5); }}
+        <motion.div 
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          className="flex-1 overflow-auto"
         >
-          <Plus className="w-4 h-4 mr-2" /> Ajouter une tâche fictive
-        </Button>
-
-        <div className="flex-1 overflow-auto rounded-lg bg-gray-50 p-4 shadow-inner">
           <CalendarView />
-        </div>
+        </motion.div>
 
         {badge && (
-          <div className="bg-yellow-100 text-yellow-900 p-4 rounded-lg flex items-center gap-3 animate-bounce mt-4 shadow-md">
+          <motion.div 
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="bg-yellow-100 text-yellow-900 p-4 rounded-lg flex items-center gap-3 mt-4 shadow-md"
+          >
             {badge} 🏆
-          </div>
+          </motion.div>
         )}
       </div>
     </MainLayout>
