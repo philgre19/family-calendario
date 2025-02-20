@@ -1,4 +1,3 @@
-
 export interface Database {
   public: {
     Tables: {
@@ -29,6 +28,8 @@ export interface Member {
   current_accessory: string | null;
   current_background: string | null;
   current_hair_color: string | null;
+  level: number | null;
+  xp: number | null;
 }
 
 export interface AvatarItem {
