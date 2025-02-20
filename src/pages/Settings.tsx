@@ -23,28 +23,16 @@ export default function Settings() {
       
       if (error) throw error;
       
-      // Valider et transformer les données
-      const validatedMembers = data.map(member => {
-        // Valider avatar_type
-        const validatedAvatarType = member.avatar_type === "illustrated" || member.avatar_type === "photo" 
-          ? member.avatar_type 
-          : "illustrated";
-        
-        // Valider quest_language_style
-        const validatedQuestStyle = member.quest_language_style === "rpg" || member.quest_language_style === "neutral"
-          ? member.quest_language_style
-          : "neutral";
-        
+      // Ajouter la propriété current_hair_color avec une valeur par défaut en initialisant directement l'objet
+      const membersWithHairColor = data.map(member => {
         const memberData: Member = {
           ...member,
-          avatar_type: validatedAvatarType as "illustrated" | "photo",
-          quest_language_style: validatedQuestStyle as "rpg" | "neutral",
           current_hair_color: null,
         };
         return memberData;
       });
       
-      return validatedMembers;
+      return membersWithHairColor;
     },
   });
 
