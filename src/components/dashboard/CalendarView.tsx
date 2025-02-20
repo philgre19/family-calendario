@@ -7,7 +7,9 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { Event } from '@/types/database.types';
-import { Utensils, Activity, School, CalendarCheck } from 'lucide-react';
+import { CalendarHeader } from './calendar/CalendarHeader';
+import { EventComponent } from './calendar/EventComponent';
+import { getEventColor, calendarMessages } from './calendar/utils';
 import 'react-big-calendar/lib/css/react-big-calendar.css';
 import './CalendarView.css';
 
@@ -37,13 +39,6 @@ interface CalendarEvent extends Event {
   color?: string;
   badges?: string[];
 }
-
-const eventBadgeIcons: Record<string, React.ReactNode> = {
-  meal: <Utensils size={12} />,
-  sport: <Activity size={12} />,
-  school: <School size={12} />,
-  appointment: <CalendarCheck size={12} />,
-};
 
 export function CalendarView() {
   const [view, setView] = useState<string>(Views.WEEK);
@@ -93,88 +88,15 @@ export function CalendarView() {
     };
   }, []);
 
-  const getEventColor = (type?: string) => {
-    switch (type) {
-      case 'birthday':
-        return '#FCD34D';
-      case 'family':
-        return '#34D399';
-      case 'important':
-        return '#EF4444';
-      default:
-        return '#4F46E5';
-    }
-  };
-
-  const components = {
-    event: (props: any) => (
-      <div className="relative p-1">
-        <div className="font-medium">{props.title}</div>
-        <div className="text-sm opacity-80">{format(props.event.start, 'HH:mm')}</div>
-        <div className="absolute top-0 right-0 flex -space-x-1">
-          {props.event.badges?.map((badge: string, index: number) => (
-            <div
-              key={badge}
-              className={`event-badge event-badge-${badge}`}
-              style={{ zIndex: props.event.badges.length - index }}
-            >
-              {eventBadgeIcons[badge]}
-            </div>
-          ))}
-        </div>
-      </div>
-    ),
-  };
-
   return (
     <div className="flex flex-col h-full bg-white/95 backdrop-blur-sm rounded-2xl p-6 shadow-sm">
-      <div className="flex items-center justify-between mb-6">
-        <div className="flex gap-2">
-          <button 
-            onClick={() => handleNavigate(new Date())}
-            className="px-4 py-2 text-sm font-medium text-gray-700 bg-white/80 backdrop-blur-sm
-                     border border-gray-200 rounded-lg hover:bg-gray-50 transition-all duration-200"
-          >
-            Aujourd'hui
-          </button>
-          <div className="flex gap-1">
-            <button 
-              onClick={() => handleNavigate(new Date(date.setMonth(date.getMonth() - 1)))}
-              className="p-2 text-gray-700 hover:bg-gray-50 rounded-lg transition-colors"
-            >
-              ←
-            </button>
-            <button 
-              onClick={() => handleNavigate(new Date(date.setMonth(date.getMonth() + 1)))}
-              className="p-2 text-gray-700 hover:bg-gray-50 rounded-lg transition-colors"
-            >
-              →
-            </button>
-          </div>
-        </div>
-
-        <h2 className="text-xl font-semibold text-gray-900">
-          {format(date, 'MMMM yyyy', { locale: fr })}
-        </h2>
-
-        <div className="flex gap-2">
-          {Object.keys(views).map((viewKey) => (
-            <button
-              key={viewKey}
-              onClick={() => handleViewChange(viewKey)}
-              className={`px-4 py-2 text-sm font-medium rounded-lg transition-all duration-200
-                ${view === viewKey 
-                  ? 'bg-blue-50 text-blue-700 border border-blue-200 shadow-sm'
-                  : 'text-gray-700 hover:bg-gray-50 border border-transparent'
-                }`}
-            >
-              {viewKey === 'month' ? 'Mois' :
-               viewKey === 'week' ? 'Semaine' :
-               viewKey === 'day' ? 'Jour' : 'Agenda'}
-            </button>
-          ))}
-        </div>
-      </div>
+      <CalendarHeader
+        date={date}
+        view={view}
+        views={views}
+        onNavigate={handleNavigate}
+        onViewChange={handleViewChange}
+      />
 
       <AnimatePresence mode="wait">
         <motion.div 
@@ -197,17 +119,8 @@ export function CalendarView() {
             date={date}
             views={views}
             eventPropGetter={eventStyleGetter}
-            components={components}
-            messages={{
-              month: 'Mois',
-              week: 'Semaine',
-              day: 'Jour',
-              agenda: 'Agenda',
-              today: "Aujourd'hui",
-              previous: 'Précédent',
-              next: 'Suivant',
-              noEventsInRange: 'Aucun événement dans cette période',
-            }}
+            components={{ event: EventComponent }}
+            messages={calendarMessages}
             popup
             className="custom-calendar"
           />
