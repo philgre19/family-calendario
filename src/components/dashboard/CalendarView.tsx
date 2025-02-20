@@ -1,8 +1,13 @@
 
-import { Calendar, dateFnsLocalizer } from 'react-big-calendar';
+import { useState, useCallback } from 'react';
+import { Calendar, dateFnsLocalizer, Views } from 'react-big-calendar';
 import { format, parse, startOfWeek, getDay } from 'date-fns';
 import { fr } from 'date-fns/locale';
+import { motion, AnimatePresence } from 'framer-motion';
+import { useQuery } from '@tanstack/react-query';
+import { supabase } from '@/integrations/supabase/client';
 import 'react-big-calendar/lib/css/react-big-calendar.css';
+import './CalendarView.css';
 
 const locales = {
   'fr': fr,
@@ -16,88 +21,146 @@ const localizer = dateFnsLocalizer({
   locales,
 });
 
-// Exemple d'événements
-const events = [
-  {
-    title: 'Anniversaire Lucas 🎂',
-    start: new Date(2025, 1, 20),
-    end: new Date(2025, 1, 20),
-    allDay: true,
-    className: 'bg-yellow-100'
-  },
-  {
-    title: 'Réunion famille 🏠',
-    start: new Date(2025, 1, 25),
-    end: new Date(2025, 1, 25),
-    allDay: true,
-    className: 'bg-blue-100'
-  },
-];
-
-const eventStyleGetter = (event: any) => {
-  return {
-    className: `${event.className} p-2 rounded-lg shadow-sm border-none`,
-    style: {
-      border: 'none'
-    }
-  };
+const views = {
+  month: true,
+  week: true,
+  day: true,
+  agenda: true,
 };
 
-export default function CalendarView() {
+export function CalendarView() {
+  const [view, setView] = useState<string>(Views.MONTH);
+  const [date, setDate] = useState(new Date());
+
+  // Récupération des événements en temps réel
+  const { data: events = [] } = useQuery({
+    queryKey: ['calendar-events'],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('events')
+        .select(`
+          *,
+          participants:event_participants(
+            member_id,
+            status
+          )
+        `)
+        .order('start_date', { ascending: true });
+
+      if (error) throw error;
+
+      return data.map(event => ({
+        ...event,
+        start: new Date(event.start_date),
+        end: new Date(event.end_date),
+        className: `event-${event.type || 'default'}`,
+      }));
+    },
+  });
+
+  const handleNavigate = useCallback((newDate: Date) => {
+    setDate(newDate);
+  }, []);
+
+  const handleViewChange = useCallback((newView: string) => {
+    setView(newView);
+  }, []);
+
+  const eventStyleGetter = useCallback((event: any) => {
+    return {
+      className: `${event.className} p-2 rounded-lg shadow-sm border-none transition-all duration-200 hover:scale-[1.02]`,
+      style: {
+        backgroundColor: event.color || '#4F46E5',
+        border: 'none',
+      }
+    };
+  }, []);
+
   return (
-    <div className="flex flex-col h-[calc(100vh-12rem)]">
-      <div className="flex items-center justify-between mb-6">
+    <div className="flex flex-col h-full bg-white rounded-lg shadow-sm">
+      <div className="flex items-center justify-between p-4 border-b">
         <div className="flex gap-2">
-          <button className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50">
+          <button 
+            onClick={() => handleNavigate(new Date())}
+            className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50"
+          >
             Aujourd'hui
           </button>
-          <button className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50">
-            Précédent
-          </button>
-          <button className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50">
-            Suivant
-          </button>
+          <div className="flex gap-1">
+            <button 
+              onClick={() => handleNavigate(new Date(date.setMonth(date.getMonth() - 1)))}
+              className="p-2 text-gray-700 hover:bg-gray-50 rounded-md"
+            >
+              ←
+            </button>
+            <button 
+              onClick={() => handleNavigate(new Date(date.setMonth(date.getMonth() + 1)))}
+              className="p-2 text-gray-700 hover:bg-gray-50 rounded-md"
+            >
+              →
+            </button>
+          </div>
         </div>
-        <h2 className="text-xl font-semibold text-gray-900">février 2025</h2>
+
+        <h2 className="text-xl font-semibold text-gray-900">
+          {format(date, 'MMMM yyyy', { locale: fr })}
+        </h2>
+
         <div className="flex gap-2">
-          <button className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50">
-            Mois
-          </button>
-          <button className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50">
-            Semaine
-          </button>
-          <button className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50">
-            Jour
-          </button>
-          <button className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50">
-            Agenda
-          </button>
+          {Object.keys(views).map((viewKey) => (
+            <button
+              key={viewKey}
+              onClick={() => handleViewChange(viewKey)}
+              className={`px-4 py-2 text-sm font-medium rounded-md transition-colors
+                ${view === viewKey 
+                  ? 'bg-blue-50 text-blue-700 border border-blue-200'
+                  : 'text-gray-700 hover:bg-gray-50 border border-transparent'
+                }`}
+            >
+              {viewKey === 'month' ? 'Mois' :
+               viewKey === 'week' ? 'Semaine' :
+               viewKey === 'day' ? 'Jour' : 'Agenda'}
+            </button>
+          ))}
         </div>
       </div>
 
-      <div className="flex-1 bg-white">
-        <Calendar
-          localizer={localizer}
-          events={events}
-          startAccessor="start"
-          endAccessor="end"
-          views={['month', 'week', 'day', 'agenda']}
-          defaultView="month"
-          style={{ height: '100%' }}
-          culture="fr"
-          eventPropGetter={eventStyleGetter}
-          messages={{
-            month: 'Mois',
-            week: 'Semaine',
-            day: 'Jour',
-            today: "Aujourd'hui",
-            agenda: 'Agenda',
-            previous: 'Précédent',
-            next: 'Suivant',
-          }}
-          className="custom-calendar"
-        />
-      </div>
+      <AnimatePresence mode="wait">
+        <motion.div 
+          key={view}
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0 }}
+          transition={{ duration: 0.2 }}
+          className="flex-1 p-4"
+        >
+          <Calendar
+            localizer={localizer}
+            events={events}
+            startAccessor="start"
+            endAccessor="end"
+            style={{ height: '100%' }}
+            view={view as any}
+            onView={handleViewChange}
+            onNavigate={handleNavigate}
+            date={date}
+            views={views}
+            eventPropGetter={eventStyleGetter}
+            messages={{
+              month: 'Mois',
+              week: 'Semaine',
+              day: 'Jour',
+              agenda: 'Agenda',
+              today: "Aujourd'hui",
+              previous: 'Précédent',
+              next: 'Suivant',
+              noEventsInRange: 'Aucun événement dans cette période',
+            }}
+            popup
+            className="custom-calendar"
+          />
+        </motion.div>
+      </AnimatePresence>
     </div>
   );
 }

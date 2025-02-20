@@ -1,0 +1,80 @@
+
+.custom-calendar {
+  @apply font-sans;
+}
+
+.custom-calendar .rbc-calendar {
+  @apply bg-white rounded-lg shadow-sm;
+}
+
+.custom-calendar .rbc-toolbar {
+  @apply mb-4;
+}
+
+.custom-calendar .rbc-toolbar button {
+  @apply px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50 transition-colors;
+}
+
+.custom-calendar .rbc-toolbar button.rbc-active {
+  @apply bg-blue-50 text-blue-700 border-blue-200;
+}
+
+.custom-calendar .rbc-month-view {
+  @apply border-gray-200 rounded-lg overflow-hidden;
+}
+
+.custom-calendar .rbc-day-bg {
+  @apply transition-colors duration-200;
+}
+
+.custom-calendar .rbc-today {
+  @apply bg-blue-50;
+}
+
+.custom-calendar .rbc-off-range-bg {
+  @apply bg-gray-50;
+}
+
+.custom-calendar .rbc-event {
+  @apply rounded-lg shadow-sm border-none transition-all duration-200;
+}
+
+.custom-calendar .rbc-event:hover {
+  @apply transform scale-[1.02];
+}
+
+.custom-calendar .rbc-row-segment {
+  @apply px-1;
+}
+
+.custom-calendar .rbc-show-more {
+  @apply text-sm text-blue-600 hover:text-blue-800 transition-colors;
+}
+
+/* Responsive adjustments */
+@media (max-width: 640px) {
+  .custom-calendar .rbc-toolbar {
+    @apply flex-col gap-2;
+  }
+  
+  .custom-calendar .rbc-toolbar-label {
+    @apply text-base;
+  }
+}
+
+/* Types d'événements */
+.event-default {
+  @apply bg-blue-500 text-white;
+}
+
+.event-birthday {
+  @apply bg-yellow-400 text-gray-900;
+}
+
+.event-family {
+  @apply bg-green-500 text-white;
+}
+
+.event-important {
+  @apply bg-red-500 text-white;
+}
