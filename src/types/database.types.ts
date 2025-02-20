@@ -58,14 +58,15 @@ export interface Event {
   description: string | null;
   start_date: string;
   end_date: string;
+  type?: 'default' | 'birthday' | 'family' | 'important';
   platform: string | null;
+  participants?: EventParticipant[];
+  created_at: string;
 }
 
 export interface EventParticipant {
-  id: string;
-  event_id: string;
   member_id: string;
-  confirmed: boolean | null;
+  status: string;
 }
 
 export interface Task {

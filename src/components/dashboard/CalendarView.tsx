@@ -6,6 +6,7 @@ import { fr } from 'date-fns/locale';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
+import { Event } from '@/types/database.types';
 import 'react-big-calendar/lib/css/react-big-calendar.css';
 import './CalendarView.css';
 
@@ -28,11 +29,16 @@ const views = {
   agenda: true,
 };
 
+interface CalendarEvent extends Event {
+  start: Date;
+  end: Date;
+  className: string;
+}
+
 export function CalendarView() {
   const [view, setView] = useState<string>(Views.MONTH);
   const [date, setDate] = useState(new Date());
 
-  // Récupération des événements en temps réel
   const { data: events = [] } = useQuery({
     queryKey: ['calendar-events'],
     queryFn: async () => {
@@ -49,7 +55,7 @@ export function CalendarView() {
 
       if (error) throw error;
 
-      return data.map(event => ({
+      return (data as Event[]).map(event => ({
         ...event,
         start: new Date(event.start_date),
         end: new Date(event.end_date),
@@ -66,7 +72,7 @@ export function CalendarView() {
     setView(newView);
   }, []);
 
-  const eventStyleGetter = useCallback((event: any) => {
+  const eventStyleGetter = useCallback((event: CalendarEvent) => {
     return {
       className: `${event.className} p-2 rounded-lg shadow-sm border-none transition-all duration-200 hover:scale-[1.02]`,
       style: {
