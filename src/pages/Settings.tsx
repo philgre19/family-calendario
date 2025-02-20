@@ -22,7 +22,14 @@ export default function Settings() {
         .order("name");
       
       if (error) throw error;
-      return data as Member[];
+      
+      // Ajout de la propriété current_hair_color avec une valeur par défaut
+      const membersWithHairColor = data.map(member => ({
+        ...member,
+        current_hair_color: member.current_hair_color || null
+      }));
+      
+      return membersWithHairColor as Member[];
     },
   });
 
