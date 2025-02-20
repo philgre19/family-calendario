@@ -23,13 +23,16 @@ export default function Settings() {
       
       if (error) throw error;
       
-      // Ajout de la propriété current_hair_color avec une valeur par défaut
-      const membersWithHairColor = data.map(member => ({
-        ...member,
-        current_hair_color: member.current_hair_color || null
-      }));
+      // Ajouter la propriété current_hair_color avec une valeur par défaut en initialisant directement l'objet
+      const membersWithHairColor = data.map(member => {
+        const memberData: Member = {
+          ...member,
+          current_hair_color: null,
+        };
+        return memberData;
+      });
       
-      return membersWithHairColor as Member[];
+      return membersWithHairColor;
     },
   });
 
