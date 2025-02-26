@@ -21,13 +21,16 @@ export const Sidebar = () => {
   const location = useLocation();
   const [hoveredItem, setHoveredItem] = useState<string | null>(null);
 
+  // Calcul de la hauteur en pourcentage pour chaque élément
+  const itemHeight = `${100 / navigation.length}%`;
+
   return (
     <TooltipProvider>
       <SidebarContainer className="w-16 h-full">
         <SidebarContent className="h-full flex items-center">
-          <SidebarGroup className="bg-[#0f31b3] h-full flex flex-col w-full py-4">
-            <SidebarGroupContent>
-              <SidebarMenu className="h-full grid grid-cols-1 gap-4">
+          <SidebarGroup className="bg-[#0f31b3] h-full flex flex-col w-full">
+            <SidebarGroupContent className="h-full py-2">
+              <SidebarMenu className="h-full grid grid-cols-1 auto-rows-fr">
                 {navigation.map((item) => (
                   <SidebarMenuItem
                     key={item.name}
