@@ -15,20 +15,14 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useSettings } from "@/hooks/useSettings";
 
 export const Sidebar = () => {
   const location = useLocation();
   const [hoveredItem, setHoveredItem] = useState<string | null>(null);
-  
-  // Pour l'exemple, on utilise un ID fixe
-  const userId = "demo-user";
-  const { settings } = useSettings(userId);
+  const { settings } = useSettings();
   const sidebarColor = settings?.sidebar_color || "#0f31b3";
-
-  // Calcul de la hauteur en pourcentage pour chaque élément
-  const itemHeight = `${100 / navigation.length}%`;
 
   return (
     <TooltipProvider>
