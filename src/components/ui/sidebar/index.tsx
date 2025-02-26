@@ -2,14 +2,13 @@ import * as React from "react";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { cn } from "@/lib/utils";
 import { Sheet, SheetContent } from "@/components/ui/sheet";
-import { Tooltip, TooltipProvider, TooltipContent } from "@/components/ui/tooltip";
+import { Tooltip, TooltipProvider, TooltipTrigger, TooltipContent } from "@/components/ui/tooltip";
 import { PanelLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { SIDEBAR_COOKIE_NAME, SIDEBAR_COOKIE_MAX_AGE, SIDEBAR_WIDTH, SIDEBAR_WIDTH_MOBILE, SIDEBAR_WIDTH_ICON, SIDEBAR_KEYBOARD_SHORTCUT } from "./constants";
 import { SidebarContext as SidebarContextType } from "./types";
-import { SidebarContext } from "./context";
+import { useSidebar } from "./context";
 import { SidebarHeader, SidebarFooter, SidebarContent, SidebarGroup } from "./base-components";
-export { useSidebar } from "./context";
 import { Input } from "@/components/ui/input";
 import { Separator } from "@/components/ui/separator";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -374,5 +373,6 @@ export {
   SidebarProvider,
   SidebarRail,
   SidebarSeparator,
-  SidebarTrigger
+  SidebarTrigger,
+  useSidebar
 };
