@@ -16,6 +16,7 @@ import Chat from "@/pages/Chat";
 import Gallery from "@/pages/Gallery";
 import Location from "@/pages/Location";
 import Settings from "@/pages/Settings";
+import AppearanceSettings from "@/pages/AppearanceSettings";
 import Stats from "@/pages/Stats";
 import NotFound from "@/pages/NotFound";
 
@@ -77,6 +78,10 @@ const router = createBrowserRouter([
   {
     path: "/settings",
     element: <Settings />,
+  },
+  {
+    path: "/settings/appearance",
+    element: <AppearanceSettings />,
   },
   {
     path: "/stats",

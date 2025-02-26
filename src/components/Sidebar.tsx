@@ -20,6 +20,7 @@ import { useState } from "react";
 export const Sidebar = () => {
   const location = useLocation();
   const [hoveredItem, setHoveredItem] = useState<string | null>(null);
+  const sidebarColor = localStorage.getItem("sidebarColor") || "#0f31b3";
 
   // Calcul de la hauteur en pourcentage pour chaque élément
   const itemHeight = `${100 / navigation.length}%`;
@@ -28,7 +29,7 @@ export const Sidebar = () => {
     <TooltipProvider>
       <SidebarContainer className="w-16 h-full">
         <SidebarContent className="h-full flex items-center">
-          <SidebarGroup className="bg-[#0f31b3] h-full flex flex-col w-full">
+          <SidebarGroup className="h-full flex flex-col w-full" style={{ backgroundColor: sidebarColor }}>
             <SidebarGroupContent className="h-full py-2">
               <SidebarMenu className="h-full grid grid-cols-1 auto-rows-fr">
                 {navigation.map((item) => (
