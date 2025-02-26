@@ -14,42 +14,46 @@ interface AppSettings {
   dashboard_layout?: string;
 }
 
-export function useSettings(userId: string) {
+export function useSettings() {
   const [settings, setSettings] = useState<AppSettings | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    if (!userId) return;
     fetchSettings();
-  }, [userId]);
+  }, []);
 
   async function fetchSettings() {
     try {
       setLoading(true);
       setError(null);
+
+      // Récupérer la session de l'utilisateur
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session?.user) {
+        throw new Error("Non authentifié");
+      }
       
-      // D'abord, essayons de récupérer les paramètres existants
       const { data, error } = await supabase
         .from("app_settings")
         .select("*")
-        .eq("user_id", userId)
-        .maybeSingle(); // Utilisation de maybeSingle au lieu de single
+        .eq("user_id", session.user.id)
+        .maybeSingle();
 
       if (error) throw error;
       
-      // Si aucune donnée n'existe, créons-en
       if (!data) {
         const { data: newData, error: insertError } = await supabase
           .from("app_settings")
           .insert([{ 
-            user_id: userId,
+            user_id: session.user.id,
             sidebar_color: "#0f31b3",
             dashboard_color: "#ffffff",
             notifications_enabled: false,
             notification_events: [],
             gamification_enabled: true,
-            quest_style: "rpg"
+            quest_style: "rpg",
+            dashboard_layout: "default"
           }])
           .select()
           .single();
@@ -73,11 +77,17 @@ export function useSettings(userId: string) {
       setLoading(true);
       setError(null);
       
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session?.user) {
+        throw new Error("Non authentifié");
+      }
+      
       const updated = { ...settings, ...partial };
       const { data, error } = await supabase
         .from("app_settings")
         .update(updated)
         .eq("id", settings.id)
+        .eq("user_id", session.user.id) // Vérification supplémentaire
         .select()
         .single();
         

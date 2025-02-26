@@ -1,12 +1,11 @@
-
 import { Card } from "@/components/ui/card"; 
 import { MainLayout } from "@/components/MainLayout";
 import { useSettings } from "@/hooks/useSettings";
+import { useNavigate } from "react-router-dom";
 
 export default function Settings() {
-  // Pour l'exemple, on utilise un ID fixe
-  const userId = "demo-user";
-  const { settings, loading, error } = useSettings(userId);
+  const { settings, loading, error } = useSettings();
+  const navigate = useNavigate();
 
   return (
     <MainLayout>
@@ -22,41 +21,39 @@ export default function Settings() {
           <SettingCard
             title="Apparence"
             description="Couleurs, Thèmes, Mode Clair/Sombre"
-            onClick={() => {
-              window.location.href = "/settings/appearance";
-            }}
+            onClick={() => navigate("/settings/appearance")}
           />
 
           <SettingCard
             title="Notifications"
             description="Activer/désactiver, choix des événements, etc."
-            onClick={() => alert("Notifications - à implémenter")}
+            onClick={() => navigate("/settings/notifications")}
             badge={settings?.notifications_enabled ? "Activées" : "Désactivées"}
           />
 
           <SettingCard
             title="Gestion des utilisateurs"
             description="Membres de la famille, rôles, mot de passe"
-            onClick={() => alert("Gestion des utilisateurs - à implémenter")}
+            onClick={() => navigate("/settings/users")}
           />
 
           <SettingCard
             title="Dashboard"
             description="Disposition des widgets, ordre, etc."
-            onClick={() => alert("Dashboard - à implémenter")}
+            onClick={() => navigate("/settings/dashboard")}
           />
 
           <SettingCard
             title="Gamification"
             description="Points, quêtes, style RPG..."
-            onClick={() => alert("Gamification - à implémenter")}
+            onClick={() => navigate("/settings/gamification")}
             badge={settings?.gamification_enabled ? "Activé" : "Désactivé"}
           />
 
           <SettingCard
             title="Sécurité"
             description="Verrouillage par code, exporter ses données, etc."
-            onClick={() => alert("Sécurité - à implémenter")}
+            onClick={() => navigate("/settings/security")}
           />
         </div>
       </div>
