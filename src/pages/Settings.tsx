@@ -1,14 +1,22 @@
 
 import { Card } from "@/components/ui/card"; 
 import { MainLayout } from "@/components/MainLayout";
+import { useSettings } from "@/hooks/useSettings";
 
 export default function Settings() {
+  // Pour l'exemple, on utilise un ID fixe
+  const userId = "demo-user";
+  const { settings, loading, error } = useSettings(userId);
+
   return (
     <MainLayout>
       <div className="p-6 space-y-6">
         <h1 className="text-3xl font-bold flex items-center gap-2">
           <span>Paramètres</span>
         </h1>
+
+        {loading && <div>Chargement...</div>}
+        {error && <div className="text-red-500">Erreur: {error}</div>}
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           <SettingCard
@@ -23,6 +31,7 @@ export default function Settings() {
             title="Notifications"
             description="Activer/désactiver, choix des événements, etc."
             onClick={() => alert("Notifications - à implémenter")}
+            badge={settings?.notifications_enabled ? "Activées" : "Désactivées"}
           />
 
           <SettingCard
@@ -41,6 +50,7 @@ export default function Settings() {
             title="Gamification"
             description="Points, quêtes, style RPG..."
             onClick={() => alert("Gamification - à implémenter")}
+            badge={settings?.gamification_enabled ? "Activé" : "Désactivé"}
           />
 
           <SettingCard
@@ -58,18 +68,25 @@ function SettingCard({
   title,
   description,
   onClick,
+  badge,
 }: {
   title: string;
   description: string;
   onClick: () => void;
+  badge?: string;
 }) {
   return (
     <Card
-      className="p-4 cursor-pointer hover:shadow-md transition"
+      className="p-4 cursor-pointer hover:shadow-md transition relative"
       onClick={onClick}
     >
       <h2 className="text-xl font-semibold">{title}</h2>
       <p className="text-sm text-muted-foreground mt-2">{description}</p>
+      {badge && (
+        <span className="absolute top-4 right-4 text-xs bg-blue-100 text-blue-800 px-2 py-1 rounded-full">
+          {badge}
+        </span>
+      )}
     </Card>
   );
 }
