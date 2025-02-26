@@ -25,13 +25,13 @@ export const Sidebar = () => {
     <TooltipProvider>
       <SidebarContainer className="w-16 h-full">
         <SidebarContent className="h-full flex items-center">
-          <SidebarGroup className="bg-[#0f31b3] h-full flex flex-col w-full py-1">
+          <SidebarGroup className="bg-[#0f31b3] h-full flex flex-col w-full py-4">
             <SidebarGroupContent>
-              <SidebarMenu className="grid grid-cols-1 gap-[2px]">
+              <SidebarMenu className="h-full grid grid-cols-1 gap-4">
                 {navigation.map((item) => (
                   <SidebarMenuItem
                     key={item.name}
-                    className="relative flex items-center justify-center group h-8"
+                    className="relative flex items-center justify-center group"
                     onMouseEnter={() => setHoveredItem(item.name)}
                     onMouseLeave={() => setHoveredItem(null)}
                   >
@@ -39,7 +39,7 @@ export const Sidebar = () => {
                       <TooltipTrigger asChild>
                         <Link
                           to={item.path}
-                          className={`relative flex items-center justify-center w-8 h-8 rounded-lg transition-all duration-300 ${
+                          className={`relative flex items-center justify-center w-10 h-10 rounded-lg transition-all duration-300 ${
                             item.hoverColor
                           } ${
                             location.pathname === item.path
