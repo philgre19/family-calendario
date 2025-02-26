@@ -7,9 +7,7 @@ import { toast } from "sonner";
 import { useSettings } from "@/hooks/useSettings";
 
 export default function AppearanceSettings() {
-  // Pour l'exemple, on utilise un ID fixe
-  const userId = "demo-user";
-  const { settings, loading, error, updateSettings } = useSettings(userId);
+  const { settings, loading, error, updateSettings } = useSettings();
 
   const [sidebarColor, setSidebarColor] = useState<string>(
     settings?.sidebar_color || "#0f31b3"
