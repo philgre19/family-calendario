@@ -47,7 +47,7 @@ export const Sidebar = () => {
                               : "hover:bg-blue-800"
                           }`}
                         >
-                          <item.icon className="h-4 w-4 text-gray-100 transition-transform transform group-hover:scale-110" />
+                          <item.icon className="h-6 w-6 text-gray-100 transition-transform transform group-hover:scale-110" />
                           {item.badge && (
                             <span
                               className={`absolute -top-1 -right-1 flex items-center justify-center min-w-[14px] h-3.5 text-[8px] font-bold text-white rounded-full px-1 ${
