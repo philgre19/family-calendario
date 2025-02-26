@@ -27,26 +27,40 @@ export function useSettings(userId: string) {
   async function fetchSettings() {
     try {
       setLoading(true);
+      setError(null);
+      
+      // D'abord, essayons de récupérer les paramètres existants
       const { data, error } = await supabase
         .from("app_settings")
         .select("*")
         .eq("user_id", userId)
-        .single();
+        .maybeSingle(); // Utilisation de maybeSingle au lieu de single
 
-      if (error && error.details?.includes("No rows")) {
+      if (error) throw error;
+      
+      // Si aucune donnée n'existe, créons-en
+      if (!data) {
         const { data: newData, error: insertError } = await supabase
           .from("app_settings")
-          .insert({ user_id: userId })
-          .select("*")
+          .insert([{ 
+            user_id: userId,
+            sidebar_color: "#0f31b3",
+            dashboard_color: "#ffffff",
+            notifications_enabled: false,
+            notification_events: [],
+            gamification_enabled: true,
+            quest_style: "rpg"
+          }])
+          .select()
           .single();
+          
         if (insertError) throw insertError;
         setSettings(newData);
-      } else if (error) {
-        throw error;
       } else {
         setSettings(data);
       }
     } catch (err: any) {
+      console.error("Erreur dans useSettings:", err);
       setError(err.message);
     } finally {
       setLoading(false);
@@ -54,20 +68,26 @@ export function useSettings(userId: string) {
   }
 
   async function updateSettings(partial: Partial<AppSettings>) {
-    if (!settings || !settings.id) return;
+    if (!settings?.id) return;
     try {
       setLoading(true);
+      setError(null);
+      
       const updated = { ...settings, ...partial };
       const { data, error } = await supabase
         .from("app_settings")
         .update(updated)
         .eq("id", settings.id)
-        .select("*")
+        .select()
         .single();
+        
       if (error) throw error;
       setSettings(data);
+      return data;
     } catch (err: any) {
+      console.error("Erreur dans updateSettings:", err);
       setError(err.message);
+      return null;
     } finally {
       setLoading(false);
     }
