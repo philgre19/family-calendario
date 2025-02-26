@@ -1,26 +1,43 @@
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { MainLayout } from "@/components/MainLayout";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
+import { useSettings } from "@/hooks/useSettings";
 
 export default function AppearanceSettings() {
+  // Pour l'exemple, on utilise un ID fixe
+  const userId = "demo-user";
+  const { settings, loading, error, updateSettings } = useSettings(userId);
+
   const [sidebarColor, setSidebarColor] = useState<string>(
-    localStorage.getItem("sidebarColor") || "#0f31b3" 
+    settings?.sidebar_color || "#0f31b3"
   );
   const [dashboardColor, setDashboardColor] = useState<string>(
-    localStorage.getItem("dashboardColor") || "#ffffff"
+    settings?.dashboard_color || "#ffffff"
   );
 
-  function handleSave() {
-    localStorage.setItem("sidebarColor", sidebarColor);
-    localStorage.setItem("dashboardColor", dashboardColor);
+  useEffect(() => {
+    if (settings) {
+      setSidebarColor(settings.sidebar_color || "#0f31b3");
+      setDashboardColor(settings.dashboard_color || "#ffffff");
+    }
+  }, [settings]);
+
+  async function handleSave() {
+    await updateSettings({
+      sidebar_color: sidebarColor,
+      dashboard_color: dashboardColor
+    });
     toast.success("Apparence mise à jour !", {
       description: `Sidebar = ${sidebarColor}, Dashboard = ${dashboardColor}`
     });
     window.location.reload();
   }
+
+  if (loading) return <MainLayout><div className="p-6">Chargement...</div></MainLayout>;
+  if (error) return <MainLayout><div className="p-6 text-red-500">Erreur: {error}</div></MainLayout>;
 
   return (
     <MainLayout>

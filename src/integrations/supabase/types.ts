@@ -36,6 +36,48 @@ export type Database = {
         }
         Relationships: []
       }
+      app_settings: {
+        Row: {
+          created_at: string | null
+          dashboard_color: string | null
+          dashboard_layout: string | null
+          gamification_enabled: boolean | null
+          id: string
+          notification_events: string[] | null
+          notifications_enabled: boolean | null
+          quest_style: string | null
+          sidebar_color: string | null
+          updated_at: string | null
+          user_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          dashboard_color?: string | null
+          dashboard_layout?: string | null
+          gamification_enabled?: boolean | null
+          id?: string
+          notification_events?: string[] | null
+          notifications_enabled?: boolean | null
+          quest_style?: string | null
+          sidebar_color?: string | null
+          updated_at?: string | null
+          user_id: string
+        }
+        Update: {
+          created_at?: string | null
+          dashboard_color?: string | null
+          dashboard_layout?: string | null
+          gamification_enabled?: boolean | null
+          id?: string
+          notification_events?: string[] | null
+          notifications_enabled?: boolean | null
+          quest_style?: string | null
+          sidebar_color?: string | null
+          updated_at?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
       avatar_items: {
         Row: {
           color: string | null
