@@ -11,20 +11,26 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/comp
 import { useEffect, useState } from "react";
 import { Member } from "@/types/database.types";
 import { motion, AnimatePresence } from "framer-motion";
-import { Badge } from "@/components/ui/badge";
-import { Plus, Crown, UserCheck, UserMinus, Pencil, Users, AlertCircle, Upload } from "lucide-react";
+import { Plus, Crown, UserCheck, UserMinus, Users } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
+
+interface NewMemberData {
+  name: string;
+  role: string;
+  avatar_type: 'illustrated' | 'photo';
+  color: string;
+}
 
 export default function UserSettings() {
   const [members, setMembers] = useState<Member[]>([]);
   const [selectedMember, setSelectedMember] = useState<Member | null>(null);
   const [loading, setLoading] = useState(true);
   const [isAddingMember, setIsAddingMember] = useState(false);
-  const [newMember, setNewMember] = useState({
+  const [newMember, setNewMember] = useState<NewMemberData>({
     name: "",
     role: "member",
-    avatar_type: "illustrated" as const,
+    avatar_type: "illustrated",
     color: "#" + Math.floor(Math.random()*16777215).toString(16)
   });
 
@@ -39,7 +45,15 @@ export default function UserSettings() {
         .select('*');
       
       if (error) throw error;
-      setMembers(data || []);
+      
+      const membersWithDefaults = data?.map(member => ({
+        ...member,
+        current_hair_color: member.current_hair_color || null,
+        level: member.level || 1,
+        xp: member.xp || 0
+      })) as Member[];
+      
+      setMembers(membersWithDefaults);
     } catch (error) {
       toast.error("Erreur lors du chargement des membres");
     } finally {
@@ -49,15 +63,31 @@ export default function UserSettings() {
 
   const handleAddMember = async () => {
     try {
+      const memberData = {
+        ...newMember,
+        current_hair_color: null,
+        participate_in_quests: true,
+        quest_language_style: 'rpg' as const,
+        level: 1,
+        xp: 0
+      };
+
       const { data, error } = await supabase
         .from('members')
-        .insert([newMember])
+        .insert([memberData])
         .select()
         .single();
 
       if (error) throw error;
 
-      setMembers(prev => [...prev, data]);
+      const newMemberWithDefaults = {
+        ...data,
+        current_hair_color: null,
+        level: 1,
+        xp: 0
+      } as Member;
+
+      setMembers(prev => [...prev, newMemberWithDefaults]);
       setIsAddingMember(false);
       setNewMember({
         name: "",
