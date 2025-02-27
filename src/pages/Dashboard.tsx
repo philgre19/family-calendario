@@ -1,8 +1,6 @@
 
 import { MainLayout } from '@/components/MainLayout';
-import { DailyMessage } from '@/components/dashboard/DailyMessage';
-import { WeatherCard } from '@/components/dashboard/WeatherCard';
-import { User, CalendarRange, Star, Sparkles, Cloud, Trophy } from 'lucide-react';
+import { User, CalendarRange, Star, Sparkles, Cloud, Trophy, Users } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { format } from 'date-fns';
 import { fr } from 'date-fns/locale';
@@ -41,48 +39,46 @@ export default function Dashboard() {
   return (
     <MainLayout>
       <div className="flex flex-col h-full bg-white p-4 overflow-hidden">
-        <header className="mb-6">
-          <div className="flex justify-between items-center mb-4">
-            <h1 className="text-4xl font-extrabold text-gray-900 flex items-center gap-2">
-              👨‍👩‍👧‍👦 Famille Grenier
-              <Star className="text-yellow-500 animate-pulse" />
+        {/* En-tête compact */}
+        <header className="mb-4">
+          <div className="flex items-center justify-between mb-2">
+            <h1 className="text-2xl font-bold text-gray-900 flex items-center gap-2">
+              <Users className="w-6 h-6 text-blue-500" />
+              Famille Grenier
             </h1>
-            <p className="text-gray-500 text-sm">
-              {format(time, 'EEEE dd MMMM yyyy - HH:mm:ss', { locale: fr })}
+            <p className="text-sm text-gray-500">
+              {format(time, 'EEEE dd MMMM yyyy', { locale: fr })}
             </p>
           </div>
 
           <motion.div 
-            initial={{ opacity: 0, y: -20 }}
+            initial={{ opacity: 0, y: -10 }}
             animate={{ opacity: 1, y: 0 }}
-            className="grid grid-cols-3 gap-4 p-4 bg-gray-50/80 backdrop-blur-sm rounded-xl shadow-sm"
+            className="flex items-center justify-between p-3 bg-gray-50/80 backdrop-blur-sm rounded-lg shadow-sm"
           >
             {/* Mot du jour */}
-            <div className="flex items-center gap-3 px-4 border-r border-gray-200">
-              <Sparkles className="w-8 h-8 text-blue-500" />
-              <div>
-                <h3 className="text-sm font-medium text-gray-500">Mot du jour</h3>
-                <p className="text-lg font-semibold bg-gradient-to-r from-blue-500 to-purple-500 bg-clip-text text-transparent">
-                  Détermination 💪
-                </p>
+            <div className="flex items-center gap-2">
+              <Sparkles className="w-5 h-5 text-blue-500" />
+              <div className="flex items-center gap-1">
+                <span className="text-sm text-gray-500">Mot du jour :</span>
+                <span className="text-base font-medium bg-gradient-to-r from-blue-500 to-purple-500 bg-clip-text text-transparent">
+                  Détermination
+                </span>
               </div>
             </div>
 
             {/* Météo */}
-            <div className="flex items-center gap-3 px-4 border-r border-gray-200">
-              <Cloud className="w-8 h-8 text-blue-400" />
-              <div>
-                <h3 className="text-sm font-medium text-gray-500">Météo</h3>
-                <p className="text-lg font-semibold">22°C ☀️</p>
-              </div>
+            <div className="flex items-center gap-2">
+              <Cloud className="w-5 h-5 text-blue-400" />
+              <span className="text-base">22°C ☀️</span>
             </div>
 
             {/* Points */}
-            <div className="flex items-center gap-3 px-4">
-              <Trophy className="w-8 h-8 text-yellow-500" />
-              <div>
-                <h3 className="text-sm font-medium text-gray-500">Points Famille</h3>
-                <p className="text-lg font-semibold">{points} points ⭐</p>
+            <div className="flex items-center gap-2">
+              <Trophy className="w-5 h-5 text-yellow-500" />
+              <div className="flex items-center gap-1">
+                <span className="text-base font-medium">{points}</span>
+                <span className="text-sm text-gray-500">points ⭐</span>
               </div>
             </div>
           </motion.div>
@@ -100,7 +96,7 @@ export default function Dashboard() {
           <motion.div 
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            className="bg-yellow-100 text-yellow-900 p-4 rounded-lg flex items-center gap-3 mt-4 shadow-md"
+            className="bg-yellow-100 text-yellow-900 p-3 rounded-lg flex items-center gap-2 mt-4 text-sm"
           >
             {badge} 🏆
           </motion.div>
