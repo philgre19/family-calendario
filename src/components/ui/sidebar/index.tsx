@@ -7,7 +7,7 @@ import { PanelLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { SIDEBAR_COOKIE_NAME, SIDEBAR_COOKIE_MAX_AGE, SIDEBAR_WIDTH, SIDEBAR_WIDTH_MOBILE, SIDEBAR_WIDTH_ICON, SIDEBAR_KEYBOARD_SHORTCUT } from "./constants";
 import { SidebarContext as SidebarContextType } from "./types";
-import { useSidebar } from "./context";
+import { SidebarContext, useSidebar } from "./context";
 import { SidebarHeader, SidebarFooter, SidebarContent, SidebarGroup } from "./base-components";
 import { Input } from "@/components/ui/input";
 import { Separator } from "@/components/ui/separator";
