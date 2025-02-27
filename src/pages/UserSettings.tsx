@@ -1,4 +1,3 @@
-
 import { MainLayout } from "@/components/MainLayout";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
@@ -48,9 +47,10 @@ export default function UserSettings() {
       
       const membersWithDefaults = data?.map(member => ({
         ...member,
-        current_hair_color: member.current_hair_color || null,
         level: member.level || 1,
-        xp: member.xp || 0
+        xp: member.xp || 0,
+        participate_in_quests: member.participate_in_quests ?? true,
+        quest_language_style: member.quest_language_style || 'rpg'
       })) as Member[];
       
       setMembers(membersWithDefaults);
@@ -65,7 +65,6 @@ export default function UserSettings() {
     try {
       const memberData = {
         ...newMember,
-        current_hair_color: null,
         participate_in_quests: true,
         quest_language_style: 'rpg' as const,
         level: 1,
@@ -82,7 +81,6 @@ export default function UserSettings() {
 
       const newMemberWithDefaults = {
         ...data,
-        current_hair_color: null,
         level: 1,
         xp: 0
       } as Member;
@@ -183,7 +181,6 @@ export default function UserSettings() {
           </AnimatePresence>
         </div>
 
-        {/* Sheet pour ajouter un membre */}
         <Sheet open={isAddingMember} onOpenChange={setIsAddingMember}>
           <SheetContent>
             <SheetHeader>
@@ -244,7 +241,6 @@ export default function UserSettings() {
           </SheetContent>
         </Sheet>
 
-        {/* Sheet pour éditer un membre */}
         <Sheet open={!!selectedMember} onOpenChange={(open) => !open && setSelectedMember(null)}>
           <SheetContent>
             {selectedMember && (
