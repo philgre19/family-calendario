@@ -7,6 +7,9 @@ import { fr } from 'date-fns/locale';
 import { toast } from 'sonner';
 import { CalendarView } from '@/components/dashboard/CalendarView';
 import { motion } from 'framer-motion';
+import { Header } from '@/components/Header';
+import { WeatherCard } from '@/components/dashboard/WeatherCard';
+import { DailyMessage } from '@/components/dashboard/DailyMessage';
 
 export default function Dashboard() {
   const [points, setPoints] = useState(0);
@@ -39,50 +42,36 @@ export default function Dashboard() {
   return (
     <MainLayout>
       <div className="flex flex-col h-full bg-white p-4 overflow-hidden">
-        {/* En-tête compact */}
-        <header className="mb-4">
-          <div className="flex items-center justify-between mb-2">
-            <h1 className="text-2xl font-bold text-gray-900 flex items-center gap-2">
-              <Users className="w-6 h-6 text-blue-500" />
-              Famille Grenier
-            </h1>
-            <p className="text-sm text-gray-500">
-              {format(time, 'EEEE dd MMMM yyyy', { locale: fr })}
-            </p>
-          </div>
+        {/* Header compact */}
+        <Header 
+          points={points}
+          temperature={22}
+          condition="clear"
+          dailyWord="Détermination"
+        />
 
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+          <WeatherCard />
+          <DailyMessage />
           <motion.div 
-            initial={{ opacity: 0, y: -10 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="flex items-center justify-between p-3 bg-gray-50/80 backdrop-blur-sm rounded-lg shadow-sm"
+            className="bg-gray-50 rounded-lg p-4 shadow-sm"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.2 }}
           >
-            {/* Mot du jour */}
-            <div className="flex items-center gap-2">
-              <Sparkles className="w-5 h-5 text-blue-500" />
-              <div className="flex items-center gap-1">
-                <span className="text-sm text-gray-500">Mot du jour :</span>
-                <span className="text-base font-medium bg-gradient-to-r from-blue-500 to-purple-500 bg-clip-text text-transparent">
-                  Détermination
-                </span>
-              </div>
-            </div>
-
-            {/* Météo */}
-            <div className="flex items-center gap-2">
-              <Cloud className="w-5 h-5 text-blue-400" />
-              <span className="text-base">22°C ☀️</span>
-            </div>
-
-            {/* Points */}
+            <h3 className="text-lg font-semibold text-gray-700 mb-2">Points Famille</h3>
             <div className="flex items-center gap-2">
               <Trophy className="w-5 h-5 text-yellow-500" />
-              <div className="flex items-center gap-1">
-                <span className="text-base font-medium">{points}</span>
-                <span className="text-sm text-gray-500">points ⭐</span>
-              </div>
+              <span className="text-2xl font-bold">{points}</span>
+              <button 
+                onClick={() => setPoints(p => p + 5)} 
+                className="ml-auto text-xs bg-blue-500 hover:bg-blue-600 text-white px-2 py-1 rounded transition-colors"
+              >
+                +5 points
+              </button>
             </div>
           </motion.div>
-        </header>
+        </div>
 
         <motion.div 
           initial={{ opacity: 0 }}
