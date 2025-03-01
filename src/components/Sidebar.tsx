@@ -17,14 +17,11 @@ import {
 } from "@/components/ui/tooltip";
 import { useState } from "react";
 import { useSettings } from "@/hooks/useSettings";
-import { useAuth } from "@/contexts/AuthContext";
-import { LogOut } from "lucide-react";
 
 export const Sidebar = () => {
   const location = useLocation();
   const [hoveredItem, setHoveredItem] = useState<string | null>(null);
   const { settings } = useSettings();
-  const { signOut } = useAuth();
   const sidebarColor = settings?.sidebar_color || "#0f31b3";
 
   return (
@@ -83,29 +80,6 @@ export const Sidebar = () => {
                     </Tooltip>
                   </SidebarMenuItem>
                 ))}
-                
-                {/* Bouton de déconnexion */}
-                <SidebarMenuItem
-                  className="relative flex items-center justify-center group mt-auto"
-                >
-                  <Tooltip>
-                    <TooltipTrigger asChild>
-                      <button
-                        onClick={() => signOut()}
-                        className="relative flex items-center justify-center w-10 h-10 rounded-lg transition-all duration-300 hover:bg-red-700"
-                      >
-                        <LogOut className="h-6 w-6 text-gray-100 transition-transform transform group-hover:scale-110" />
-                      </button>
-                    </TooltipTrigger>
-                    <TooltipContent
-                      side="right"
-                      className="bg-white text-black px-2 py-1 rounded-lg shadow-md text-xs"
-                      sideOffset={5}
-                    >
-                      Déconnexion
-                    </TooltipContent>
-                  </Tooltip>
-                </SidebarMenuItem>
               </SidebarMenu>
             </SidebarGroupContent>
           </SidebarGroup>
