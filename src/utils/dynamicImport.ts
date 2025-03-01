@@ -11,7 +11,6 @@ export default function dynamic(
   { ssr = true, loading: LoadingComponent }: DynamicOptions = {}
 ) {
   if (!ssr) {
-    // Client-side rendering with React.lazy
     const LazyComponent = lazy(importFunc);
     
     return function DynamicComponent(props: any) {
