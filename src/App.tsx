@@ -1,200 +1,96 @@
 
-import { createBrowserRouter, RouterProvider } from "react-router-dom";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { Toaster } from "@/components/ui/sonner";
-import { Suspense, lazy } from "react";
-import { Skeleton } from "@/components/ui/skeleton";
+import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import { Toaster } from '@/components/ui/sonner';
+import { AuthProvider, useAuth } from '@/contexts/AuthContext';
+import Dashboard from '@/pages/Dashboard';
+import Tasks from '@/pages/Tasks';
+import Calendar from '@/pages/Calendar';
+import Stats from '@/pages/Stats';
+import Settings from '@/pages/Settings';
+import UserSettings from '@/pages/UserSettings';
+import Weather from '@/pages/Weather';
+import Auth from '@/pages/Auth';
+import NotFound from '@/pages/NotFound';
 
-// Lazy-loaded components
-const Dashboard = lazy(() => import("@/pages/Dashboard"));
-const Calendar = lazy(() => import("@/pages/Calendar"));
-const Tasks = lazy(() => import("@/pages/Tasks"));
-const Meals = lazy(() => import("@/pages/Meals"));
-const ShoppingList = lazy(() => import("@/pages/ShoppingList"));
-const Habits = lazy(() => import("@/pages/Habits"));
-const Gamification = lazy(() => import("@/pages/Gamification"));
-const Weather = lazy(() => import("@/pages/Weather"));
-const Finance = lazy(() => import("@/pages/Finance"));
-const Chat = lazy(() => import("@/pages/Chat"));
-const Gallery = lazy(() => import("@/pages/Gallery"));
-const Location = lazy(() => import("@/pages/Location"));
-const Settings = lazy(() => import("@/pages/Settings"));
-const AppearanceSettings = lazy(() => import("@/pages/AppearanceSettings"));
-const Stats = lazy(() => import("@/pages/Stats"));
-const NotFound = lazy(() => import("@/pages/NotFound"));
-const UserSettings = lazy(() => import("@/pages/UserSettings"));
+// Composant pour les routes protégées
+function ProtectedRoute({ children }: { children: React.ReactNode }) {
+  const { user, loading } = useAuth();
+  
+  if (loading) {
+    return <div className="flex items-center justify-center h-screen">Chargement...</div>;
+  }
+  
+  if (!user) {
+    return <Navigate to="/auth" replace />;
+  }
+  
+  return <>{children}</>;
+}
 
-// Loading component
-const PageLoader = () => (
-  <div className="flex items-center justify-center h-screen w-full bg-background">
-    <div className="w-full max-w-md p-8 space-y-4">
-      <Skeleton className="h-12 w-3/4 mx-auto rounded-lg" />
-      <Skeleton className="h-32 w-full rounded-lg" />
-      <div className="grid grid-cols-2 gap-4">
-        <Skeleton className="h-24 rounded-lg" />
-        <Skeleton className="h-24 rounded-lg" />
-      </div>
-      <Skeleton className="h-40 w-full rounded-lg" />
-    </div>
-  </div>
-);
+// Version non-protégée pour le routeur principal
+function AppRoutes() {
+  const { user, loading } = useAuth();
 
-const queryClient = new QueryClient();
+  // Rediriger vers le dashboard si déjà connecté
+  if (user && window.location.pathname === '/auth') {
+    return <Navigate to="/dashboard" replace />;
+  }
 
-const router = createBrowserRouter([
-  {
-    path: "/",
-    element: (
-      <Suspense fallback={<PageLoader />}>
-        <Dashboard />
-      </Suspense>
-    ),
-  },
-  {
-    path: "/dashboard",
-    element: (
-      <Suspense fallback={<PageLoader />}>
-        <Dashboard />
-      </Suspense>
-    ),
-  },
-  {
-    path: "/calendar",
-    element: (
-      <Suspense fallback={<PageLoader />}>
-        <Calendar />
-      </Suspense>
-    ),
-  },
-  {
-    path: "/tasks",
-    element: (
-      <Suspense fallback={<PageLoader />}>
-        <Tasks />
-      </Suspense>
-    ),
-  },
-  {
-    path: "/meals",
-    element: (
-      <Suspense fallback={<PageLoader />}>
-        <Meals />
-      </Suspense>
-    ),
-  },
-  {
-    path: "/shopping-list",
-    element: (
-      <Suspense fallback={<PageLoader />}>
-        <ShoppingList />
-      </Suspense>
-    ),
-  },
-  {
-    path: "/habits",
-    element: (
-      <Suspense fallback={<PageLoader />}>
-        <Habits />
-      </Suspense>
-    ),
-  },
-  {
-    path: "/gamification",
-    element: (
-      <Suspense fallback={<PageLoader />}>
-        <Gamification />
-      </Suspense>
-    ),
-  },
-  {
-    path: "/weather",
-    element: (
-      <Suspense fallback={<PageLoader />}>
-        <Weather />
-      </Suspense>
-    ),
-  },
-  {
-    path: "/finance",
-    element: (
-      <Suspense fallback={<PageLoader />}>
-        <Finance />
-      </Suspense>
-    ),
-  },
-  {
-    path: "/chat",
-    element: (
-      <Suspense fallback={<PageLoader />}>
-        <Chat />
-      </Suspense>
-    ),
-  },
-  {
-    path: "/gallery",
-    element: (
-      <Suspense fallback={<PageLoader />}>
-        <Gallery />
-      </Suspense>
-    ),
-  },
-  {
-    path: "/location",
-    element: (
-      <Suspense fallback={<PageLoader />}>
-        <Location />
-      </Suspense>
-    ),
-  },
-  {
-    path: "/settings",
-    element: (
-      <Suspense fallback={<PageLoader />}>
-        <Settings />
-      </Suspense>
-    ),
-  },
-  {
-    path: "/settings/appearance",
-    element: (
-      <Suspense fallback={<PageLoader />}>
-        <AppearanceSettings />
-      </Suspense>
-    ),
-  },
-  {
-    path: "/settings/users",
-    element: (
-      <Suspense fallback={<PageLoader />}>
-        <UserSettings />
-      </Suspense>
-    ),
-  },
-  {
-    path: "/stats",
-    element: (
-      <Suspense fallback={<PageLoader />}>
-        <Stats />
-      </Suspense>
-    ),
-  },
-  {
-    path: "*",
-    element: (
-      <Suspense fallback={<PageLoader />}>
-        <NotFound />
-      </Suspense>
-    ),
-  },
-]);
-
-function App() {
   return (
-    <QueryClientProvider client={queryClient}>
-      <RouterProvider router={router} />
-      <Toaster position="top-right" />
-    </QueryClientProvider>
+    <Routes>
+      <Route path="/auth" element={<Auth />} />
+      
+      {/* Routes protégées */}
+      <Route path="/dashboard" element={
+        <ProtectedRoute>
+          <Dashboard />
+        </ProtectedRoute>
+      } />
+      <Route path="/tasks" element={
+        <ProtectedRoute>
+          <Tasks />
+        </ProtectedRoute>
+      } />
+      <Route path="/calendar" element={
+        <ProtectedRoute>
+          <Calendar />
+        </ProtectedRoute>
+      } />
+      <Route path="/stats" element={
+        <ProtectedRoute>
+          <Stats />
+        </ProtectedRoute>
+      } />
+      <Route path="/settings" element={
+        <ProtectedRoute>
+          <Settings />
+        </ProtectedRoute>
+      } />
+      <Route path="/user-settings" element={
+        <ProtectedRoute>
+          <UserSettings />
+        </ProtectedRoute>
+      } />
+      <Route path="/weather" element={
+        <ProtectedRoute>
+          <Weather />
+        </ProtectedRoute>
+      } />
+      
+      {/* Redirection par défaut */}
+      <Route path="/" element={<Navigate to={user ? "/dashboard" : "/auth"} replace />} />
+      <Route path="*" element={<NotFound />} />
+    </Routes>
   );
 }
 
-export default App;
+export default function App() {
+  return (
+    <Router>
+      <AuthProvider>
+        <AppRoutes />
+        <Toaster position="top-right" />
+      </AuthProvider>
+    </Router>
+  );
+}
