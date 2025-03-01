@@ -23,6 +23,10 @@ export default function dynamic(
     );
   }
 
-  // Pour SSR, retourne un composant qui chargera dynamiquement le module
-  return importFunc().then(module => module.default);
+  // Pour SSR, retourne une fonction qui résout le module
+  return async (props: any) => {
+    const module = await importFunc();
+    const Component = module.default;
+    return <Component {...props} />;
+  };
 }

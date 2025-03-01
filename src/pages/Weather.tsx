@@ -1,12 +1,19 @@
 
-import { useEffect, useState } from "react";
 import { MainLayout } from "@/components/MainLayout";
 import dynamic from "@/utils/dynamicImport";
+import { Suspense } from "react";
 
 // Importation dynamique du composant WeatherMap avec SSR désactivé
 const WeatherMap = dynamic(
   () => import("@/components/WeatherMap"),
-  { ssr: false }
+  { 
+    ssr: false,
+    loading: () => (
+      <div className="h-[calc(100vh-200px)] w-full flex items-center justify-center bg-gray-100">
+        <p className="text-gray-500">Chargement de la carte météo...</p>
+      </div>
+    )
+  }
 );
 
 export default function Weather() {
