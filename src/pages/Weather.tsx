@@ -2,7 +2,7 @@
 import { MainLayout } from "@/components/MainLayout";
 import dynamic from "@/utils/dynamicImport";
 
-// Importation dynamique du composant WeatherMap avec SSR désactivé
+// Dynamic import of the WeatherMap component with SSR disabled
 const WeatherMap = dynamic(
   () => import("@/components/WeatherMap"),
   { 

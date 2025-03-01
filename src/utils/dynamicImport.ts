@@ -22,7 +22,7 @@ export default function dynamic(
     };
   }
 
-  // Pour SSR, retourne une fonction qui résout le module
+  // For SSR, return an async function that resolves the module
   return async function ServerComponent(props: any) {
     const module = await importFunc();
     const Component = module.default;

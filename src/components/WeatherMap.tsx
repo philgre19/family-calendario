@@ -2,7 +2,7 @@
 import { useEffect, useState } from "react";
 import "leaflet/dist/leaflet.css";
 
-// Coordonnées et configuration
+// Coordinates and configuration
 const QUEBEC_POSITION: [number, number] = [46.8139, -71.2080];
 const ZOOM_LEVEL = 7;
 const API_KEY = "0606032a1f036f7dec7c61361f00e9d8";
@@ -25,7 +25,7 @@ export default function WeatherMap() {
   return <ClientSideMap />;
 }
 
-// Ce composant ne sera rendu que côté client
+// This component will only be rendered on the client side
 function ClientSideMap() {
   const [map, setMap] = useState<any>(null);
   const [loading, setLoading] = useState(true);
@@ -37,13 +37,13 @@ function ClientSideMap() {
     async function initializeMap() {
       try {
         console.log("Initialisation de la carte...");
-        // Import dynamique de Leaflet
+        // Dynamic import of Leaflet
         const L = await import("leaflet");
         
         if (!isMounted) return;
         
         console.log("Leaflet chargé, mise en place des icônes...");
-        // Fix pour les icônes Leaflet par défaut
+        // Fix for default Leaflet icons
         delete (L.Icon.Default.prototype as any)._getIconUrl;
         L.Icon.Default.mergeOptions({
           iconRetinaUrl: "https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon-2x.png",
@@ -51,7 +51,7 @@ function ClientSideMap() {
           shadowUrl: "https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png",
         });
 
-        // Initialisation de la carte
+        // Check if the DOM element exists before initializing the map
         const mapContainer = document.getElementById("weather-map");
         if (mapContainer) {
           console.log("Container de carte trouvé, initialisation...");
@@ -59,7 +59,7 @@ function ClientSideMap() {
           
           const mapInstance = L.map("weather-map").setView(QUEBEC_POSITION, ZOOM_LEVEL);
           
-          // Ajout des couches de base
+          // Add base layers
           const osmLayer = L.tileLayer(
             "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
             {
@@ -74,7 +74,7 @@ function ClientSideMap() {
             }
           );
           
-          // Ajout des couches météo
+          // Add weather layers
           const cloudsLayer = L.tileLayer(
             `https://tile.openweathermap.org/map/clouds_new/{z}/{x}/{y}.png?appid=${API_KEY}`,
             {
@@ -99,7 +99,7 @@ function ClientSideMap() {
             }
           );
           
-          // Création des couches de base et des superpositions pour le contrôle des couches
+          // Create base and overlay layers for layer control
           const baseLayers = {
             "OpenStreetMap": osmLayer,
             "Satellite": satelliteLayer
@@ -111,10 +111,10 @@ function ClientSideMap() {
             "Température": temperatureLayer
           };
           
-          // Ajout du contrôle des couches
+          // Add layer control
           L.control.layers(baseLayers, overlays, { position: "topright" }).addTo(mapInstance);
           
-          // Ajout d'un marqueur pour la ville de Québec
+          // Add a marker for Quebec City
           const marker = L.marker(QUEBEC_POSITION).addTo(mapInstance);
           marker.bindPopup("<div><h2 class='font-semibold'>Québec</h2><p>Capitale nationale du Québec</p></div>");
           
@@ -142,7 +142,7 @@ function ClientSideMap() {
     
     initializeMap();
     
-    // Fonction de nettoyage
+    // Cleanup function
     return () => {
       console.log("Nettoyage du composant de carte");
       isMounted = false;
