@@ -17,6 +17,11 @@ export default function Weather() {
   const ZOOM_LEVEL = 7;
   const API_KEY = "0606032a1f036f7dec7c61361f00e9d8";
   const [mapLoaded, setMapLoaded] = useState(false);
+  const [MapContainer, setMapContainer] = useState<any>(null);
+  const [TileLayer, setTileLayer] = useState<any>(null);
+  const [LayersControl, setLayersControl] = useState<any>(null);
+  const [Marker, setMarker] = useState<any>(null);
+  const [Popup, setPopup] = useState<any>(null);
   
   useEffect(() => {
     // Set map height
@@ -26,9 +31,21 @@ export default function Weather() {
     }
     
     // Dynamically import react-leaflet components only on client-side
-    import("react-leaflet").then(() => {
-      setMapLoaded(true);
-    });
+    const loadMapComponents = async () => {
+      try {
+        const ReactLeaflet = await import("react-leaflet");
+        setMapContainer(ReactLeaflet.MapContainer);
+        setTileLayer(ReactLeaflet.TileLayer);
+        setLayersControl(ReactLeaflet.LayersControl);
+        setMarker(ReactLeaflet.Marker);
+        setPopup(ReactLeaflet.Popup);
+        setMapLoaded(true);
+      } catch (error) {
+        console.error("Error loading react-leaflet:", error);
+      }
+    };
+    
+    loadMapComponents();
   }, []);
 
   return (
@@ -37,12 +54,72 @@ export default function Weather() {
         <h1 className="text-3xl font-semibold mb-6">Météo du Québec</h1>
         
         <div id="weather-map" className="w-full rounded-lg overflow-hidden shadow-lg border border-gray-200">
-          {mapLoaded ? (
-            <MapComponent 
-              position={QUEBEC_POSITION} 
-              zoom={ZOOM_LEVEL} 
-              apiKey={API_KEY} 
-            />
+          {mapLoaded && MapContainer && TileLayer && LayersControl && Marker && Popup ? (
+            <MapContainer
+              center={QUEBEC_POSITION}
+              zoom={ZOOM_LEVEL}
+              style={{ height: "calc(100vh - 200px)", width: "100%" }}
+            >
+              <LayersControl position="topright">
+                {/* Base layers */}
+                <LayersControl.BaseLayer checked name="OpenStreetMap">
+                  <TileLayer
+                    attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+                    url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+                  />
+                </LayersControl.BaseLayer>
+                
+                <LayersControl.BaseLayer name="Satellite">
+                  <TileLayer
+                    attribution='&copy; <a href="https://www.esri.com">Esri</a>'
+                    url="https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}"
+                  />
+                </LayersControl.BaseLayer>
+                
+                {/* Weather overlays */}
+                <LayersControl.Overlay name="Nuages">
+                  <TileLayer
+                    attribution='&copy; <a href="https://openweathermap.org/">OpenWeatherMap</a>'
+                    url={`https://tile.openweathermap.org/map/clouds_new/{z}/{x}/{y}.png?appid=${API_KEY}`}
+                    opacity={0.6}
+                  />
+                </LayersControl.Overlay>
+                
+                <LayersControl.Overlay name="Précipitations">
+                  <TileLayer
+                    attribution='&copy; <a href="https://openweathermap.org/">OpenWeatherMap</a>'
+                    url={`https://tile.openweathermap.org/map/precipitation_new/{z}/{x}/{y}.png?appid=${API_KEY}`}
+                    opacity={0.6}
+                  />
+                </LayersControl.Overlay>
+                
+                <LayersControl.Overlay name="Température">
+                  <TileLayer
+                    attribution='&copy; <a href="https://openweathermap.org/">OpenWeatherMap</a>'
+                    url={`https://tile.openweathermap.org/map/temp_new/{z}/{x}/{y}.png?appid=${API_KEY}`}
+                    opacity={0.6}
+                  />
+                </LayersControl.Overlay>
+                
+                <LayersControl.Overlay name="Radar">
+                  <TileLayer
+                    attribution='&copy; <a href="https://openweathermap.org/">OpenWeatherMap</a>'
+                    url={`https://tile.openweathermap.org/map/radar/{z}/{x}/{y}.png?appid=${API_KEY}`}
+                    opacity={0.6}
+                  />
+                </LayersControl.Overlay>
+              </LayersControl>
+              
+              {/* Marker for Quebec */}
+              <Marker position={QUEBEC_POSITION}>
+                <Popup>
+                  <div>
+                    <h2 className="font-semibold">Québec</h2>
+                    <p>Capitale nationale du Québec</p>
+                  </div>
+                </Popup>
+              </Marker>
+            </MapContainer>
           ) : (
             <div className="h-[calc(100vh-200px)] w-full flex items-center justify-center bg-gray-100">
               <p className="text-gray-500">Chargement de la carte...</p>
@@ -65,79 +142,5 @@ export default function Weather() {
         </div>
       </div>
     </MainLayout>
-  );
-}
-
-// Client-side only component
-function MapComponent({ position, zoom, apiKey }: { position: [number, number]; zoom: number; apiKey: string }) {
-  // This component only runs on the client, so we can safely import and use react-leaflet
-  const { MapContainer, TileLayer, LayersControl, Marker, Popup } = require("react-leaflet");
-  
-  return (
-    <MapContainer
-      center={position}
-      zoom={zoom}
-      style={{ height: "calc(100vh - 200px)", width: "100%" }}
-    >
-      <LayersControl position="topright">
-        {/* Base layers */}
-        <LayersControl.BaseLayer checked name="OpenStreetMap">
-          <TileLayer
-            attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-            url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-          />
-        </LayersControl.BaseLayer>
-        
-        <LayersControl.BaseLayer name="Satellite">
-          <TileLayer
-            attribution='&copy; <a href="https://www.esri.com">Esri</a>'
-            url="https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}"
-          />
-        </LayersControl.BaseLayer>
-        
-        {/* Weather overlays */}
-        <LayersControl.Overlay name="Nuages">
-          <TileLayer
-            attribution='&copy; <a href="https://openweathermap.org/">OpenWeatherMap</a>'
-            url={`https://tile.openweathermap.org/map/clouds_new/{z}/{x}/{y}.png?appid=${apiKey}`}
-            opacity={0.6}
-          />
-        </LayersControl.Overlay>
-        
-        <LayersControl.Overlay name="Précipitations">
-          <TileLayer
-            attribution='&copy; <a href="https://openweathermap.org/">OpenWeatherMap</a>'
-            url={`https://tile.openweathermap.org/map/precipitation_new/{z}/{x}/{y}.png?appid=${apiKey}`}
-            opacity={0.6}
-          />
-        </LayersControl.Overlay>
-        
-        <LayersControl.Overlay name="Température">
-          <TileLayer
-            attribution='&copy; <a href="https://openweathermap.org/">OpenWeatherMap</a>'
-            url={`https://tile.openweathermap.org/map/temp_new/{z}/{x}/{y}.png?appid=${apiKey}`}
-            opacity={0.6}
-          />
-        </LayersControl.Overlay>
-        
-        <LayersControl.Overlay name="Radar">
-          <TileLayer
-            attribution='&copy; <a href="https://openweathermap.org/">OpenWeatherMap</a>'
-            url={`https://tile.openweathermap.org/map/radar/{z}/{x}/{y}.png?appid=${apiKey}`}
-            opacity={0.6}
-          />
-        </LayersControl.Overlay>
-      </LayersControl>
-      
-      {/* Marker for Quebec */}
-      <Marker position={position}>
-        <Popup>
-          <div>
-            <h2 className="font-semibold">Québec</h2>
-            <p>Capitale nationale du Québec</p>
-          </div>
-        </Popup>
-      </Marker>
-    </MapContainer>
   );
 }
