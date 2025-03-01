@@ -29,20 +29,23 @@ export default function WeatherMap() {
 function ClientSideMap() {
   const [map, setMap] = useState<any>(null);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     let isMounted = true;
     
     async function initializeMap() {
       try {
+        console.log("Initialisation de la carte...");
         // Import dynamique de Leaflet
-        const leaflet = await import("leaflet");
+        const L = await import("leaflet");
         
         if (!isMounted) return;
         
+        console.log("Leaflet chargé, mise en place des icônes...");
         // Fix pour les icônes Leaflet par défaut
-        delete (leaflet.Icon.Default.prototype as any)._getIconUrl;
-        leaflet.Icon.Default.mergeOptions({
+        delete (L.Icon.Default.prototype as any)._getIconUrl;
+        L.Icon.Default.mergeOptions({
           iconRetinaUrl: "https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon-2x.png",
           iconUrl: "https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png",
           shadowUrl: "https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png",
@@ -51,19 +54,20 @@ function ClientSideMap() {
         // Initialisation de la carte
         const mapContainer = document.getElementById("weather-map");
         if (mapContainer) {
+          console.log("Container de carte trouvé, initialisation...");
           mapContainer.style.height = "calc(100vh - 200px)";
           
-          const mapInstance = leaflet.map("weather-map").setView(QUEBEC_POSITION, ZOOM_LEVEL);
+          const mapInstance = L.map("weather-map").setView(QUEBEC_POSITION, ZOOM_LEVEL);
           
           // Ajout des couches de base
-          const osmLayer = leaflet.tileLayer(
+          const osmLayer = L.tileLayer(
             "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
             {
               attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
             }
           ).addTo(mapInstance);
           
-          const satelliteLayer = leaflet.tileLayer(
+          const satelliteLayer = L.tileLayer(
             "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",
             {
               attribution: '&copy; <a href="https://www.esri.com">Esri</a>'
@@ -71,7 +75,7 @@ function ClientSideMap() {
           );
           
           // Ajout des couches météo
-          const cloudsLayer = leaflet.tileLayer(
+          const cloudsLayer = L.tileLayer(
             `https://tile.openweathermap.org/map/clouds_new/{z}/{x}/{y}.png?appid=${API_KEY}`,
             {
               attribution: '&copy; <a href="https://openweathermap.org/">OpenWeatherMap</a>',
@@ -79,7 +83,7 @@ function ClientSideMap() {
             }
           );
           
-          const precipitationLayer = leaflet.tileLayer(
+          const precipitationLayer = L.tileLayer(
             `https://tile.openweathermap.org/map/precipitation_new/{z}/{x}/{y}.png?appid=${API_KEY}`,
             {
               attribution: '&copy; <a href="https://openweathermap.org/">OpenWeatherMap</a>',
@@ -87,7 +91,7 @@ function ClientSideMap() {
             }
           );
           
-          const temperatureLayer = leaflet.tileLayer(
+          const temperatureLayer = L.tileLayer(
             `https://tile.openweathermap.org/map/temp_new/{z}/{x}/{y}.png?appid=${API_KEY}`,
             {
               attribution: '&copy; <a href="https://openweathermap.org/">OpenWeatherMap</a>',
@@ -108,20 +112,29 @@ function ClientSideMap() {
           };
           
           // Ajout du contrôle des couches
-          leaflet.control.layers(baseLayers, overlays, { position: "topright" }).addTo(mapInstance);
+          L.control.layers(baseLayers, overlays, { position: "topright" }).addTo(mapInstance);
           
           // Ajout d'un marqueur pour la ville de Québec
-          const marker = leaflet.marker(QUEBEC_POSITION).addTo(mapInstance);
+          const marker = L.marker(QUEBEC_POSITION).addTo(mapInstance);
           marker.bindPopup("<div><h2 class='font-semibold'>Québec</h2><p>Capitale nationale du Québec</p></div>");
+          
+          console.log("Carte initialisée avec succès");
           
           if (isMounted) {
             setMap(mapInstance);
+            setLoading(false);
+          }
+        } else {
+          console.error("Élément DOM 'weather-map' non trouvé");
+          if (isMounted) {
+            setError("Erreur: Élément DOM 'weather-map' non trouvé");
             setLoading(false);
           }
         }
       } catch (error) {
         console.error("Erreur lors de l'initialisation de la carte:", error);
         if (isMounted) {
+          setError(`Erreur lors de l'initialisation de la carte: ${error}`);
           setLoading(false);
         }
       }
@@ -131,6 +144,7 @@ function ClientSideMap() {
     
     // Fonction de nettoyage
     return () => {
+      console.log("Nettoyage du composant de carte");
       isMounted = false;
       if (map) {
         map.remove();
@@ -142,6 +156,14 @@ function ClientSideMap() {
     return (
       <div className="h-[calc(100vh-200px)] w-full flex items-center justify-center bg-gray-100">
         <p className="text-gray-500">Chargement de la carte...</p>
+      </div>
+    );
+  }
+  
+  if (error) {
+    return (
+      <div className="h-[calc(100vh-200px)] w-full flex items-center justify-center bg-gray-100">
+        <p className="text-red-500">{error}</p>
       </div>
     );
   }

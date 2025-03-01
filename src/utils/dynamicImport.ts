@@ -1,7 +1,4 @@
 
-/**
- * Polyfill simple pour 'next/dynamic' dans un projet Vite/React
- */
 import { lazy, Suspense } from 'react';
 
 interface DynamicOptions {
@@ -16,15 +13,17 @@ export default function dynamic(
   if (!ssr) {
     const LazyComponent = lazy(importFunc);
     
-    return (props: any) => (
-      <Suspense fallback={LoadingComponent ? <LoadingComponent /> : <div>Loading...</div>}>
-        <LazyComponent {...props} />
-      </Suspense>
-    );
+    return function DynamicComponent(props: any) {
+      return (
+        <Suspense fallback={LoadingComponent ? <LoadingComponent /> : <div>Loading...</div>}>
+          <LazyComponent {...props} />
+        </Suspense>
+      );
+    };
   }
 
   // Pour SSR, retourne une fonction qui résout le module
-  return async (props: any) => {
+  return async function ServerComponent(props: any) {
     const module = await importFunc();
     const Component = module.default;
     return <Component {...props} />;

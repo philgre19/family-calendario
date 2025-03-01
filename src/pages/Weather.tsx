@@ -1,7 +1,6 @@
 
 import { MainLayout } from "@/components/MainLayout";
 import dynamic from "@/utils/dynamicImport";
-import { Suspense } from "react";
 
 // Importation dynamique du composant WeatherMap avec SSR désactivé
 const WeatherMap = dynamic(
