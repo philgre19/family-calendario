@@ -30,7 +30,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [session, setSession] = useState<Session | null>(null);
   const [userProfile, setUserProfile] = useState<UserProfile | null>(null);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false); // Changé à false par défaut
   const navigate = useNavigate();
 
   // Fonction pour charger le profil utilisateur
@@ -118,7 +118,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       const { error } = await supabase.auth.signOut();
       if (error) throw error;
       
-      navigate('/auth');
+      navigate('/dashboard'); // Redirection vers dashboard au lieu de /auth
       setUserProfile(null);
       toast.success('Déconnexion réussie!');
     } catch (error: any) {
