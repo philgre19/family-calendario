@@ -77,7 +77,7 @@ function AppRoutes() {
         </ProtectedRoute>
       } />
       
-      {/* Redirection par défaut */}
+      {/* Redirection par défaut - maintenant pointe vers dashboard */}
       <Route path="/" element={<Navigate to={user ? "/dashboard" : "/auth"} replace />} />
       <Route path="*" element={<NotFound />} />
     </Routes>

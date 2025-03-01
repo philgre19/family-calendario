@@ -1,4 +1,3 @@
-
 import { Card } from "@/components/ui/card";
 import { MainLayout } from "@/components/MainLayout";
 import { useSettings } from "@/hooks/useSettings";
@@ -100,7 +99,7 @@ export default function Settings() {
             title="Gestion des utilisateurs"
             description="Gérez les membres de la famille et leurs rôles"
             icon={<Users className="h-5 w-5" />}
-            onClick={() => navigate("/settings/users")}
+            onClick={() => navigate("/user-settings")}
           />
 
           <SettingCard

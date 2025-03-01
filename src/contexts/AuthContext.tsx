@@ -38,7 +38,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     try {
       const profile = await getUserProfile(userId);
       if (profile) {
-        setUserProfile(profile);
+        setUserProfile(profile as UserProfile);
       }
     } catch (error) {
       console.error("Erreur lors du chargement du profil:", error);
