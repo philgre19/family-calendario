@@ -17,7 +17,7 @@ export default function WeatherMap() {
   if (!isClient) {
     return (
       <div className="h-[calc(100vh-200px)] w-full flex items-center justify-center bg-gray-100">
-        <p className="text-gray-500">Chargement de la carte...</p>
+        <p className="text-gray-500">Loading map...</p>
       </div>
     );
   }
@@ -36,13 +36,13 @@ function ClientSideMap() {
     
     async function initializeMap() {
       try {
-        console.log("Initialisation de la carte...");
+        console.log("Initializing map...");
         // Dynamic import of Leaflet
         const L = await import("leaflet");
         
         if (!isMounted) return;
         
-        console.log("Leaflet chargé, mise en place des icônes...");
+        console.log("Leaflet loaded, setting up icons...");
         // Fix for default Leaflet icons
         delete (L.Icon.Default.prototype as any)._getIconUrl;
         L.Icon.Default.mergeOptions({
@@ -54,7 +54,7 @@ function ClientSideMap() {
         // Check if the DOM element exists before initializing the map
         const mapContainer = document.getElementById("weather-map");
         if (mapContainer) {
-          console.log("Container de carte trouvé, initialisation...");
+          console.log("Map container found, initializing...");
           mapContainer.style.height = "calc(100vh - 200px)";
           
           const mapInstance = L.map("weather-map").setView(QUEBEC_POSITION, ZOOM_LEVEL);
@@ -106,9 +106,9 @@ function ClientSideMap() {
           };
           
           const overlays = {
-            "Nuages": cloudsLayer,
-            "Précipitations": precipitationLayer,
-            "Température": temperatureLayer
+            "Clouds": cloudsLayer,
+            "Precipitation": precipitationLayer,
+            "Temperature": temperatureLayer
           };
           
           // Add layer control
@@ -116,25 +116,25 @@ function ClientSideMap() {
           
           // Add a marker for Quebec City
           const marker = L.marker(QUEBEC_POSITION).addTo(mapInstance);
-          marker.bindPopup("<div><h2 class='font-semibold'>Québec</h2><p>Capitale nationale du Québec</p></div>");
+          marker.bindPopup("<div><h2 class='font-semibold'>Quebec</h2><p>National capital of Quebec</p></div>");
           
-          console.log("Carte initialisée avec succès");
+          console.log("Map successfully initialized");
           
           if (isMounted) {
             setMap(mapInstance);
             setLoading(false);
           }
         } else {
-          console.error("Élément DOM 'weather-map' non trouvé");
+          console.error("DOM element 'weather-map' not found");
           if (isMounted) {
-            setError("Erreur: Élément DOM 'weather-map' non trouvé");
+            setError("Error: DOM element 'weather-map' not found");
             setLoading(false);
           }
         }
       } catch (error) {
-        console.error("Erreur lors de l'initialisation de la carte:", error);
+        console.error("Error initializing map:", error);
         if (isMounted) {
-          setError(`Erreur lors de l'initialisation de la carte: ${error}`);
+          setError(`Error initializing map: ${error}`);
           setLoading(false);
         }
       }
@@ -144,7 +144,7 @@ function ClientSideMap() {
     
     // Cleanup function
     return () => {
-      console.log("Nettoyage du composant de carte");
+      console.log("Cleaning up map component");
       isMounted = false;
       if (map) {
         map.remove();
@@ -155,7 +155,7 @@ function ClientSideMap() {
   if (loading) {
     return (
       <div className="h-[calc(100vh-200px)] w-full flex items-center justify-center bg-gray-100">
-        <p className="text-gray-500">Chargement de la carte...</p>
+        <p className="text-gray-500">Loading map...</p>
       </div>
     );
   }
